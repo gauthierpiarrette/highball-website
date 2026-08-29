@@ -67,8 +67,7 @@ the anti-cheat data keeps AreWeAntiCheatYet's MIT notice. Fork it, ship it in yo
 needed. CodeWeavers' database is a genuinely better database and it is also theirs.
 <a href="/docs/data/">How the data works.</a></p>
 
-<p><b>Verdicts carry dates and a renderer.</b> Every entry records the engine build, the macOS version and which
-of DXVK, DXMT or D3DMetal was used, because a game that black-screens under one often runs under another.</p>
+<p><b>Verdicts name a renderer, and dated runs record the engine build.</b> That structure is the point: a game that black-screens under one translation layer often runs under another, so a single verdict per game throws away the part you need. Being straight about the fill: 40 of the 101 curated entries have no renderer recorded yet, only the 5 verified ones carry a date and an engine build, and exactly one carries a macOS version. The schema is ahead of the data, and the empty rows are printed as open asks rather than hidden.</p>
 
 <div class="note">
 <p><b>Being straight about the coverage.</b> The per-renderer structure is real. The coverage is not there yet.

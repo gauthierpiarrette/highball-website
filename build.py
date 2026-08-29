@@ -49,23 +49,19 @@ def load(dbpath):
     d["games"].sort(key=lambda g: (STATUS_ORDER.get(g.get("status"), 9), g["title"].lower()))
     d["recipes"] = {}
     for f in glob.glob(f"{dbpath}/recipes/*/*.json"):
-        try:
-            r = json.load(open(f))
-            d["recipes"][r["id"]] = r
-        except Exception:
-            pass
+        r = json.load(open(f))          # a malformed recipe should fail the build, not vanish
+        if "id" not in r:
+            sys.exit(f"error: recipe {f} has no id")
+        d["recipes"][r["id"]] = r
     d["reports"] = {}
     for f in glob.glob(f"{dbpath}/db/reports/*.jsonl"):
         slug = os.path.basename(f)[:-6]
-        d["reports"][slug] = [json.loads(l) for l in open(f) if l.strip()]
-    try:
-        d["derived"] = json.load(open(f"{dbpath}/db/derived/derived.json"))
-    except Exception:
-        d["derived"] = {"games": {}}
-    try:
-        d["anticheat"] = json.load(open(f"{dbpath}/db/anticheat.json"))
-    except Exception:
-        d["anticheat"] = {"games": {}}
+        rows = [json.loads(l) for l in open(f) if l.strip()]
+        rows.sort(key=lambda r: r.get("date") or "")   # oldest first, so reversed() = newest first
+        d["reports"][slug] = rows
+    # Required inputs: a malformed file must fail the build, not silently publish an empty site.
+    d["derived"] = json.load(open(f"{dbpath}/db/derived/derived.json"))
+    d["anticheat"] = json.load(open(f"{dbpath}/db/anticheat.json"))
     return d
 
 
@@ -75,7 +71,7 @@ def layout(*, title, desc, path, body, base, noindex=False, og_image=None, jsonl
            extra_head="", wide=False):
     """Wrap a body fragment in the site chrome. `path` is the absolute site path with trailing slash."""
     url = base.rstrip("/") + path
-    og = og_image or f"{base.rstrip('/')}/static/og.png"
+    og = og_image or f"{base.rstrip('/')}/static/og.jpg"
     nav = [("/database/", "Database", False), ("/vs/", "Compare", False),
            ("/docs/anti-cheat/", "Anti-cheat", True), ("/docs/install/", "Install", True),
            ("/docs/credits/", "Credits", True)]
@@ -88,7 +84,12 @@ def layout(*, title, desc, path, body, base, noindex=False, og_image=None, jsonl
         for h, t, s in nav)
     if jsonld:
         graph = jsonld if isinstance(jsonld, list) else [jsonld]
-        ld = "".join(f'<script type="application/ld+json">{json.dumps(o)}</script>' for o in graph)
+        # json.dumps does not escape < or &, so db-controlled text containing "</script>"
+        # would break out of the block. These escapes are valid JSON.
+        def safe(o):
+            return (json.dumps(o).replace("<", "\\u003c").replace(">", "\\u003e")
+                    .replace("&", "\\u0026").replace("\u2028", "\\u2028").replace("\u2029", "\\u2029"))
+        ld = "".join(f'<script type="application/ld+json">{safe(o)}</script>' for o in graph)
     else:
         ld = ""
     return f"""<!doctype html>
@@ -117,12 +118,13 @@ def layout(*, title, desc, path, body, base, noindex=False, og_image=None, jsonl
 {extra_head}{ld}
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 <div class="topbar"><div class="wrap {'wrap-wide' if wide else ''} row">
-  <a class="brand" href="/"><img src="/static/logo-128.png" alt="">Highball</a>
+  <a class="brand" href="/"><img src="/static/logo-128.png" width="26" height="26" alt="">Highball</a>
   <nav>{navhtml}</nav>
   <a class="dl" href="https://github.com/gauthierpiarrette/highball/releases/latest/download/Highball.dmg">Download</a>
 </div></div>
-{body}
+<main id="main">{body}</main>
 <footer>
   <div class="foot-links">
     <a href="/database/">Compatibility database</a>
@@ -158,9 +160,20 @@ def steam_art(appid):
     return f"https://cdn.cloudflare.steamstatic.com/steam/apps/{appid}/header.jpg" if appid else None
 
 
+RENDERER_GLOSS = {
+    "dxvk": "Direct3D 9-11 over Vulkan",
+    "dxmt": "Direct3D 11 over Metal",
+    "d3dmetal": "Apple's Game Porting Toolkit",
+}
+
+
 def renderer_matrix(game, reports):
-    """Honest matrix: what we know per renderer, and empty cells as open asks."""
+    """Honest matrix: what we know per renderer, graded by how good the evidence actually is."""
     rec = (game.get("renderer") or "").lower()
+    status = game.get("status", "community")
+    verified = status == "verified-local"
+    rec_pill = "good" if verified else "info"
+    rec_label = "Recommended" if verified else "Reported"
     seen = {}
     for r in reports:
         rr = (r.get("renderer") or "").lower()
@@ -168,11 +181,19 @@ def renderer_matrix(game, reports):
             seen.setdefault(rr, []).append(r)
     rows = []
     for r in RENDERERS:
-        label = RENDERER_LABEL[r]
+        label = f'{RENDERER_LABEL[r]}<span class="prov">{RENDERER_GLOSS[r]}</span>'
         if r == rec:
             n = len(seen.get(r, []))
-            detail = (f"{n} report{'s' if n != 1 else ''}" if n else "from the curated entry")
-            rows.append(f'<tr><td class="r">{label}</td><td><span class="pill good">Recommended</span></td>'
+            if n:
+                detail = f"{n} report{'s' if n != 1 else ''}"
+            elif verified:
+                detail = "run by Highball on Apple Silicon"
+            elif status == "reported-upstream":
+                detail = "named in upstream release notes"
+            else:
+                detail = "community reports"
+            rows.append(f'<tr><td class="r">{label}</td>'
+                        f'<td><span class="pill {rec_pill}">{rec_label}</span></td>'
                         f'<td class="sub">{detail}</td></tr>')
         elif r in seen:
             n = len(seen[r])
@@ -183,40 +204,70 @@ def renderer_matrix(game, reports):
                         f'<td class="sub">no report yet — '
                         f'<a href="https://github.com/gauthierpiarrette/highball-db/issues/new?template=report.yml">'
                         f'send one</a></td></tr>')
-    return ('<div class="tablewrap"><table class="matrix"><thead><tr><th>Renderer</th><th>Verdict</th>'
+    return ('<div class="tablewrap" tabindex="0" role="region" aria-label="Renderer verdicts">'
+            '<table class="matrix"><thead><tr><th>Renderer</th><th>Verdict</th>'
             '<th>Evidence</th></tr></thead><tbody>' + "".join(rows) + "</tbody></table></div>")
 
 
+TIER_VERB = {
+    "verified-local":    "Verified by Highball on Apple Silicon",
+    "reported-upstream": "Reported working upstream, not yet run by Highball",
+    "community":         "Reported working by the community, not yet run by Highball",
+}
+
+
 def faq_entries(title, game, blocked, label, stamp, has_recipe):
-    """Real questions people type, answered in one paragraph each."""
+    """Real questions people type, answered in one paragraph each.
+    Every answer must be true of the actual data — these are surfaced standalone by search engines."""
     def qa(q, a):
-        return {"@type": "Question", "name": q,
-                "acceptedAnswer": {"@type": "Answer", "text": a}}
+        return {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}}
+    nm = game.get("nativeMac") or {}
     out = []
     if blocked:
-        out.append(qa(f"Does {title} work on Mac?",
-                      f"No. {title} uses kernel-level anti-cheat, which needs a Windows kernel driver. "
-                      f"Compatibility layers such as Highball, CrossOver and Whisky run entirely in user space, "
-                      f"so there is nothing for that driver to load into. No Mac app can run it, and this will "
-                      f"not change with a future release. Cloud streaming is the only way to play it on a Mac."))
-        out.append(qa(f"Can I play {title} on Mac with CrossOver or Parallels?",
-                      "No. The same limit applies to every compatibility layer, and to virtual machines: "
-                      "the anti-cheat driver cannot load. Streaming services run the real Windows build on a "
-                      "remote machine, which is why they work."))
+        if nm.get("available"):
+            out.append(qa(f"Does {title} work on Mac?",
+                          f"Yes, but not through a compatibility layer. {nm.get('where', 'The publisher')} ships a "
+                          f"native macOS build, and that is what you should install. The Windows build cannot run "
+                          f"under Highball, CrossOver, Whisky or a virtual machine, because its anti-cheat needs a "
+                          f"Windows kernel driver that macOS will never load."))
+        else:
+            out.append(qa(f"Does {title} work on Mac?",
+                          f"No. {title} uses kernel-level anti-cheat, which needs a Windows kernel driver. "
+                          f"Compatibility layers such as Highball, CrossOver and Whisky run entirely in user space, "
+                          f"so there is nothing for that driver to load into, and virtual machines have the same "
+                          f"limit. Cloud streaming runs the real Windows build remotely, which is why it works."))
+            out.append(qa(f"Can I play {title} on Mac with CrossOver or Parallels?",
+                          "No. The same limit applies to every compatibility layer and to virtual machines: the "
+                          "anti-cheat driver cannot load. Streaming is the only route."))
     else:
         rec = game.get("renderer")
-        out.append(qa(f"Does {title} work on Mac?",
-                      f"{title} runs on Apple Silicon through Highball, a free open-source compatibility layer. "
-                      f"Status in the Highball database: {label}. {stamp}."))
+        status = game.get("status", "community")
+        if status == "verified-local":
+            evidence = (f"Highball has run it on Apple Silicon"
+                        + (f" ({stamp})" if game.get("lastVerified") else "") + ".")
+        elif status == "reported-upstream":
+            evidence = ("It is named as working or fixed in upstream release notes. Highball has not run it, "
+                        "so treat this as a strong report rather than a verified result.")
+        else:
+            evidence = ("This comes from community reports rather than a Highball test run, so treat it as a "
+                        "reasonable expectation rather than a guarantee.")
+        out.append(qa(f"Does {title} work on Mac?", f"{title} has no native Mac build, but it is reported to run "
+                                                    f"on Apple Silicon through Highball, a free open-source "
+                                                    f"compatibility layer. {evidence}"
+                      if not nm.get("available") else
+                      f"Yes. {nm.get('where', 'The publisher')} ships a native macOS build, which will beat running "
+                      f"the Windows version through any compatibility layer. {nm.get('note', '')}"))
         if rec:
+            r = RENDERER_LABEL.get(rec, rec)
             out.append(qa(f"Which renderer should I use for {title}?",
-                          f"{RENDERER_LABEL.get(rec, rec)}. Highball can translate Direct3D through DXVK, DXMT or "
-                          f"Apple's D3DMetal, and the right choice varies by game. For {title} the database "
-                          f"records {RENDERER_LABEL.get(rec, rec)}, and Highball selects it automatically."))
+                          f"{r}. Highball can translate Direct3D through DXVK, DXMT or Apple's D3DMetal, and the "
+                          f"right choice varies by game. The database records {r} for {title}"
+                          + (f", and applying the {title} recipe sets it for you." if has_recipe
+                             else ". Set it in the bottle's settings before you launch.")))
         if has_recipe:
             out.append(qa(f"Is there a one-click setup for {title}?",
-                          f"Yes. Highball ships a recipe for {title} that applies the tested renderer and any "
-                          f"per-game fixes automatically. Open the game in your Library and apply it."))
+                          f"Yes. Highball ships a recipe for {title} that sets the tested renderer and any per-game "
+                          f"fixes. Open the game in your Library and apply it."))
     return out
 
 
@@ -234,29 +285,38 @@ def game_page(game, data, base):
     # freshness stamp — the field competitors don't publish per renderer/engine
     engine = next((r.get("engine") for r in reversed(reports) if r.get("engine")), None)
     macos = next((r.get("macos") for r in reversed(reports) if r.get("macos")), None)
-    if last:
+    if blocked:
+        stamp = "structural, not a test result"
+    elif last:
         bits = [f"last confirmed {last}"]
         if engine: bits.append(f"engine {engine}")
         if macos: bits.append(f"macOS {macos}")
         stamp = " · ".join(bits)
     else:
-        stamp = "not yet confirmed on a dated Highball run"
+        stamp = "no dated Highball run yet"
 
-    if blocked:
+    nm = game.get("nativeMac") or {}
+    if blocked and nm.get("available"):
+        verdict = (f"<b>Play the native Mac version.</b> {html.escape(nm.get('where', 'The publisher'))} ships an "
+                   f"official macOS build of {html.escape(title)}. The <i>Windows</i> build cannot run under "
+                   f"Highball, CrossOver, Whisky or a virtual machine, because its anti-cheat loads a Windows "
+                   f"kernel driver, but you do not need it.")
+    elif blocked:
         verdict = (f"<b>{html.escape(title)} cannot run on a Mac through Highball, CrossOver, Whisky, "
                    f"or any other compatibility layer.</b> Its anti-cheat loads a Windows kernel driver, "
                    f"and macOS will never load one. This is not a bug anyone can fix.")
     else:
         rec = game.get("renderer")
-        verdict = (f"Runs on Apple Silicon through Highball"
-                   + (f" with the <b>{RENDERER_LABEL.get(rec, rec)}</b> renderer" if rec else "")
+        verb = TIER_VERB.get(status, "Reported working")
+        verdict = (f"<b>{verb}</b>"
+                   + (f", using the <b>{RENDERER_LABEL.get(rec, rec)}</b> renderer" if rec else "")
                    + f". {html.escape(meaning)}")
 
     art = steam_art(appid)
     head = f"""<div class="wrap">
 <p class="crumbs"><a href="/">Highball</a> › <a href="/database/">Database</a> › {html.escape(title)}</p>
 <div class="gamehead">
-  {f'<img class="art" src="{art}" alt="" loading="lazy" referrerpolicy="no-referrer">' if art else ''}
+  {f'<img class="art" src="{art}" width="460" height="215" alt="" referrerpolicy="no-referrer">' if art else ''}
   <div class="meta">
     <span class="pill {cls}">{label}</span>
     <h1>{html.escape(title)} on Mac</h1>
@@ -270,6 +330,15 @@ def game_page(game, data, base):
 </div></div>"""
 
     body = [head, '<div class="wrap prose">']
+
+    if nm.get("available"):
+        where = html.escape(nm.get("where", "the publisher"))
+        link = nm.get("url")
+        body.append(f"""<div class="note good"><b>There is a native Mac build.</b>
+        {html.escape(nm.get('note', ''))} It is on {where}
+        {f'(<a href="{html.escape(link)}">official page</a>)' if link else ''}. A native build runs straight on
+        Metal with nothing translating in between, so it will beat anything on this page.
+        <a href="/docs/native-mac-games/">Other games in the same situation</a>.</div>""")
 
     if blocked:
         names = ", ".join(ac["names"]) if ac and ac.get("names") else "kernel anti-cheat"
@@ -290,9 +359,15 @@ def game_page(game, data, base):
                     "This is what the database knows for this title — empty rows are open questions, "
                     "not failures.</p>")
         body.append(renderer_matrix(game, reports))
-        body.append(f'<p class="sub" style="margin-top:.7rem">{html.escape(stamp)}. '
-                    f'Verdicts are stamped with the engine build and macOS version they were seen on, '
-                    f'because a result without a date is a rumour.</p>')
+        if last and engine:
+            body.append(f'<p class="sub" style="margin-top:.7rem">{html.escape(stamp)}. Dated runs record the '
+                        f'engine build and, where the reporter gave it, the macOS version.</p>')
+        else:
+            body.append('<p class="sub" style="margin-top:.7rem">No dated Highball run yet. When one lands it '
+                        'records the renderer, the engine build and the macOS version it was seen on — which is '
+                        'what stops a verdict quietly rotting. '
+                        '<a href="https://github.com/gauthierpiarrette/highball-db/issues/new?template=report.yml">'
+                        'Send one</a>.</p>')
 
     if game.get("notes"):
         body.append("<h2>Notes</h2><p>" + html.escape(game["notes"]).replace("\n", "</p><p>") + "</p>")
@@ -316,6 +391,15 @@ def game_page(game, data, base):
         body.append('<p class="sub">Before installing anything, it is worth checking whether the game '
                     '<a href="/docs/native-mac-games/">already ships a native Mac build</a>.</p>')
 
+    # FAQ must be visible on the page: FAQPage schema whose answers exist only in JSON-LD is
+    # non-compliant, and the content is genuinely useful anyway.
+    faqs = faq_entries(title, game, blocked, label, stamp, bool(recipe))
+    if faqs:
+        qa_html = "".join(
+            f'<h3>{html.escape(f["name"])}</h3><p>{html.escape(f["acceptedAnswer"]["text"])}</p>'
+            for f in faqs)
+        body.append(f"<h2>Common questions</h2>{qa_html}")
+
     body.append(f"""<h2>Contribute a result</h2>
     <p>This page is generated from an open database. If you have run {html.escape(title)} on Apple Silicon,
     working or not, a report takes a minute and fills in the empty rows above.
@@ -331,8 +415,7 @@ def game_page(game, data, base):
               {"@type": "ListItem", "position": 1, "name": "Highball", "item": B + "/"},
               {"@type": "ListItem", "position": 2, "name": "Compatibility database", "item": B + "/database/"},
               {"@type": "ListItem", "position": 3, "name": title}]},
-          {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": faq_entries(
-              title, game, blocked, label, stamp, bool(recipe))}]
+          {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": faqs}]
     if appid:
         ld[0]["sameAs"] = f"https://store.steampowered.com/app/{appid}/"
 
@@ -364,7 +447,7 @@ def prediction_page(appid, rec, base, slug):
     body = f"""<div class="wrap">
 <p class="crumbs"><a href="/">Highball</a> › <a href="/database/">Database</a> › {html.escape(title)}</p>
 <div class="gamehead">
-  {f'<img class="art" src="{art}" alt="" loading="lazy" referrerpolicy="no-referrer">' if art else ''}
+  {f'<img class="art" src="{art}" width="460" height="215" alt="" referrerpolicy="no-referrer">' if art else ''}
   <div class="meta">
     <span class="pill {pcls}">{plabel} (prediction)</span>
     <h1>{html.escape(title)} on Mac</h1>
@@ -426,10 +509,10 @@ and when that was last confirmed. Every claim carries its provenance. Curated da
 <div class="tiles">{tiles}</div>
 <div class="search"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
 <input type="search" id="q" placeholder="Filter {len(games)} curated titles…" aria-label="Filter by title"></div>
-<div class="tablewrap"><table>
+<div class="tablewrap" tabindex="0" role="region" aria-label="Curated games"><table>
 <thead><tr><th>Game</th><th>Status</th><th>Renderer</th><th>Last confirmed</th><th class="num">Reports</th></tr></thead>
 <tbody id="rows">{"".join(row(g) for g in games)}</tbody></table></div>
-<p class="sub" id="empty" style="display:none;padding:1rem">No curated entry matches. It may still have a prediction below.</p>
+<p class="sub" id="empty" role="status" aria-live="polite" style="display:none;padding:1rem">No curated entry matches. It may still have a prediction below.</p>
 
 <section>
 <h2 style="font-size:1.4rem">Predictions</h2>
@@ -442,7 +525,7 @@ not verdicts — and they are deliberately kept out of search results until some
 <div class="tablewrap" id="dwrap" style="display:none"><table>
 <thead><tr><th>Game</th><th>Prediction</th><th>Proton</th><th class="num">Reports</th></tr></thead>
 <tbody id="drows"></tbody></table></div>
-<p class="sub" id="dhint" style="padding:.6rem 0">Type at least two characters.</p>
+<p class="sub" id="dhint" role="status" aria-live="polite" style="padding:.6rem 0">Type at least two characters.</p>
 </section>
 </div>
 <script>
@@ -451,19 +534,27 @@ function apply(){{let n=0;rows.forEach(r=>{{const ok=(!f||r.dataset.status===f)&
 document.getElementById('empty').style.display=n?'none':'block';}}
 document.querySelector('.tiles').addEventListener('click',e=>{{const b=e.target.closest('.tile');if(!b)return;
 const k=b.dataset.f;f=(f===k)?null:k;document.querySelectorAll('.tile').forEach(t=>t.setAttribute('aria-pressed',t.dataset.f===f));apply();}});
-document.getElementById('q').addEventListener('input',e=>{{q=e.target.value.toLowerCase().trim();apply();}});
-let D=null;const dq=document.getElementById('dq');
-dq.addEventListener('input',async e=>{{const v=e.target.value.toLowerCase().trim();
+const qi=document.getElementById('q');
+qi.addEventListener('input',e=>{{q=e.target.value.toLowerCase().trim();apply();}});
+const qp=new URLSearchParams(location.search).get('q');
+if(qp){{qi.value=qp;q=qp.toLowerCase().trim();apply();}}
+let Dp=null,seq=0,timer;const dq=document.getElementById('dq');
+const loadD=()=>Dp||(Dp=fetch('/data/predictions.json').then(r=>{{if(!r.ok)throw 0;return r.json();}})
+  .then(j=>j.games).catch(e=>{{Dp=null;throw e;}}));
+dq.addEventListener('input',e=>{{clearTimeout(timer);const v=e.target.value.toLowerCase().trim();timer=setTimeout(()=>run(v),160);}});
+async function run(v){{const my=++seq;
 const wrap=document.getElementById('dwrap'),hint=document.getElementById('dhint');
 if(v.length<2){{wrap.style.display='none';hint.style.display='block';hint.textContent='Type at least two characters.';return;}}
-if(!D){{hint.textContent='Loading predictions…';
-try{{D=(await (await fetch('/data/predictions.json')).json()).games;}}
-catch(err){{hint.textContent='Could not load predictions. Try again, or browse the database on GitHub.';return;}}}}
+let D;
+hint.style.display='block';hint.textContent='Searching predictions…';
+try{{D=await loadD();}}catch(err){{if(my!==seq)return;hint.textContent='Could not load predictions. Try again, or browse the data on GitHub.';return;}}
+if(my!==seq)return;
 const hits=Object.entries(D).filter(([id,g])=>g.t.toLowerCase().includes(v)).slice(0,80);
 document.getElementById('drows').innerHTML=hits.map(([id,g])=>
 `<tr><td class="t"><a href="/games/${{g.s}}/">${{g.t.replace(/</g,'&lt;')}}</a></td><td><span class="pill ${{g.c}}">${{g.p}}</span></td><td class="mono">${{g.pt}}</td><td class="num">${{g.n}}</td></tr>`).join('');
-wrap.style.display=hits.length?'':'none';hint.style.display=hits.length?'none':'block';
-if(!hits.length)hint.textContent='No prediction for that title.';}});
+wrap.style.display=hits.length?'':'none';
+hint.textContent=hits.length?(hits.length+' prediction'+(hits.length>1?'s':'')+' shown'):'No prediction for that title.';
+hint.style.display='block';}}
 </script>"""
     return layout(title="Mac game compatibility database — Highball",
                   desc=f"Which Windows games run on Apple Silicon: {counts['verified-local']} verified, "
@@ -485,7 +576,8 @@ def landing_page(data, base, counts, derived_count):
     <a class="btn" href="https://github.com/gauthierpiarrette/highball/releases/latest/download/Highball.dmg">Download for macOS</a></p>
   <p class="sub">notarized .dmg · auto-updating · Apple Silicon · macOS 14+ · GPL-3, no paid tier ever</p>
   <div style="margin:3rem auto 0;max-width:880px">
-    <img src="/static/app.png" alt="Highball's Library: one cover grid across Steam and Epic with source badges and verified verdicts"
+    <img src="/static/app.jpg" width="1600" height="1088" fetchpriority="high"
+         alt="Highball's Library: one cover grid across Steam and Epic with source badges and verified verdicts"
          style="border-radius:10px;border:1px solid var(--line);display:block">
   </div>
 </header>
@@ -493,24 +585,25 @@ def landing_page(data, base, counts, derived_count):
 <section class="wrap">
   <div class="grid">
     <div class="card"><span class="mono" style="font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--amber)">One click</span>
-      <h3>Steam and Epic, ready to play</h3><p style="color:var(--ink2);font-size:.95rem">A verified Wine engine is assembled from pinned,
+      <h2 style="font-size:1.15rem;margin:0 0 .5rem">Steam and Epic, ready to play</h2><p style="color:var(--ink2);font-size:.95rem">A verified Wine engine is assembled from pinned,
       checksummed upstream releases. Steam installs with one click; your Epic library connects and plays through the
       open-source Legendary client. .NET and VC++ runtimes are one click too.</p></div>
     <div class="card"><span class="mono" style="font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--amber)">Per-game verdicts</span>
-      <h3>Your library, with answers</h3><p style="color:var(--ink2);font-size:.95rem">Games appear as cards with a verdict from the open
-      database — verified, reported, predicted — and the renderer that actually works. Play launches with the right one.</p></div>
+      <h2 style="font-size:1.15rem;margin:0 0 .5rem">Your library, with answers</h2><p style="color:var(--ink2);font-size:.95rem">Games appear as cards with a verdict from the open
+      database: verified, reported or predicted, plus the renderer other people got working. Recipes set it for the games that have one.</p></div>
     <div class="card"><span class="mono" style="font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--amber)">Open data</span>
-      <h3>A database, not a promise</h3><p style="color:var(--ink2);font-size:.95rem">Every claim carries its provenance and its date:
+      <h2 style="font-size:1.15rem;margin:0 0 .5rem">A database, not a promise</h2><p style="color:var(--ink2);font-size:.95rem">Every claim carries its provenance, and its date where one exists:
       verified on real hardware, reported upstream, or derived from ProtonDB crossed with anti-cheat data.
       <a href="/database/">Browse it</a> — it's yours to reuse.</p></div>
     <div class="card"><span class="mono" style="font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--amber)">Nothing to sign up for</span>
-      <h3>No account, no telemetry</h3><p style="color:var(--ink2);font-size:.95rem">Highball asks for no login, phones nothing home,
+      <h2 style="font-size:1.15rem;margin:0 0 .5rem">No account, no telemetry</h2><p style="color:var(--ink2);font-size:.95rem">Highball asks for no login, phones nothing home,
       and keeps every bottle on your own disk. The app is GPL-3 and the data is open; neither can be taken away later.</p></div>
     <div class="card"><span class="mono" style="font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--amber)">Measured</span>
-      <h3>Fast, and shown to be</h3><p style="color:var(--ink2);font-size:.95rem">msync-aware launching gave +42% frame rate on the reference
-      machine, verified with Metal's own performance HUD. Frame caps and async shader compilation are one toggle away.</p></div>
+      <h2 style="font-size:1.15rem;margin:0 0 .5rem">Tuned where it counts</h2><p style="color:var(--ink2);font-size:.95rem">Launches use the faster in-process
+      synchronisation path where the game tolerates it, which is worth real frame rate on CPU-bound titles.
+      Frame caps and async shader compilation are one toggle away.</p></div>
     <div class="card"><span class="mono" style="font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--amber)">Built to last</span>
-      <h3>Whisky's lesson, learned</h3><p style="color:var(--ink2);font-size:.95rem">No Wine fork, no binary hosting, engine-agnostic by design —
+      <h2 style="font-size:1.15rem;margin:0 0 .5rem">Whisky's lesson, learned</h2><p style="color:var(--ink2);font-size:.95rem">No Wine fork, no binary hosting, engine-agnostic by design —
       the failure modes that ended Whisky are structurally removed. Engines update through a signed JSON manifest.</p></div>
   </div>
 </section>
@@ -550,7 +643,7 @@ def landing_page(data, base, counts, derived_count):
                   desc="Free, open-source, notarized. One-click Steam and Epic, per-game renderer verdicts from an "
                        "open database, honest about anti-cheat. No account, no telemetry.",
                   path="/", body=body, base=base, jsonld=ld,
-                  og_image=f"{base.rstrip('/')}/static/app.png")
+                  og_image=f"{base.rstrip('/')}/static/og.jpg")
 
 
 # ---------------------------------------------------------------- content pages
@@ -663,7 +756,13 @@ def main():
     pred_index = {}
     if not a.no_predictions:
         used = set(curated_slugs)
+        # A curated entry always wins: never publish a Linux-derived guess for a game we
+        # already have a real verdict on (it would contradict the curated page).
+        curated_appids = {str(g.get("steam_appid")) for g in games if g.get("steam_appid")}
+        curated_titles = {g["title"].strip().lower() for g in games}
         for appid, rec in derived.items():
+            if str(appid) in curated_appids or rec.get("title", "").strip().lower() in curated_titles:
+                continue
             s = slugify(rec.get("title", "")) or f"app-{appid}"
             if s in used:
                 s = f"{s}-{appid}"
@@ -733,9 +832,13 @@ def main():
 
     # sitemap: indexable pages only (predictions are deliberately excluded)
     today = datetime.date.today().isoformat()
-    urls = "".join(
-        f"<url><loc>{a.base.rstrip('/')}{p}</loc><lastmod>{lastmod.get(p, today)}</lastmod></url>"
-        for p in indexable)
+    # Only emit lastmod where a real date exists. Stamping today's build date on every URL
+    # trains crawlers to ignore the signal entirely.
+    def entry(p):
+        d = lastmod.get(p)
+        return (f"<url><loc>{a.base.rstrip('/')}{p}</loc>"
+                + (f"<lastmod>{d}</lastmod>" if d else "") + "</url>")
+    urls = "".join(entry(p) for p in indexable)
     open(os.path.join(a.out, "sitemap.xml"), "w").write(
         f'<?xml version="1.0" encoding="UTF-8"?>\n'
         f'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>\n')

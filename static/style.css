@@ -7,6 +7,12 @@
   --radius:10px;
 }
 * { box-sizing:border-box }
+/* Visible keyboard focus everywhere. Without this the site is unusable without a mouse. */
+:where(a,button,input,summary,[tabindex]):focus-visible {
+  outline:2px solid var(--amber); outline-offset:2px; border-radius:4px }
+.skip { position:absolute; left:-9999px; top:0 }
+.skip:focus { left:1rem; top:.5rem; z-index:50; background:var(--surface); color:var(--ink);
+  border:1px solid var(--amber); border-radius:6px; padding:.6rem 1rem; text-decoration:none }
 html { scroll-behavior:smooth }
 body { margin:0; background:var(--ground); color:var(--ink);
        font:17px/1.6 "IBM Plex Sans",-apple-system,BlinkMacSystemFont,sans-serif;
@@ -24,8 +30,8 @@ h2,h3 { font-weight:700 }
 /* ---- site chrome ---- */
 .topbar { border-bottom:1px solid var(--line); background:rgba(22,17,10,.86); backdrop-filter:blur(10px);
           position:sticky; top:0; z-index:20 }
-.topbar .row { display:flex; align-items:center; gap:1.4rem; height:58px }
-.topbar .brand { display:flex; align-items:center; gap:.55rem; font-family:"Bricolage Grotesque",sans-serif;
+.topbar .row { display:flex; align-items:center; gap:1rem; min-height:58px; flex-wrap:wrap; padding-block:.4rem }
+.topbar .brand { display:flex; min-width:0; align-items:center; gap:.55rem; font-family:"Bricolage Grotesque",sans-serif;
                  font-weight:800; font-size:1.05rem; color:var(--ink); text-decoration:none }
 .topbar .brand img { width:26px; height:26px }
 .topbar nav { display:flex; gap:1.15rem; margin-left:auto; flex-wrap:wrap }
@@ -73,7 +79,9 @@ section { padding-block:3.25rem }
 .search { display:flex; align-items:center; gap:.5rem; background:var(--surface); border:1px solid var(--line);
           border-radius:9px; padding:.6rem .9rem; margin-bottom:1rem }
 .search svg { flex:none; opacity:.45 }
-.search input { border:0; outline:0; background:none; color:var(--ink); font:inherit; width:100% }
+.search input { border:0; background:none; color:var(--ink); font:inherit; width:100% }
+.search input:focus { outline:0 }
+.search:focus-within { border-color:var(--amber); box-shadow:0 0 0 3px rgba(215,154,69,.18) }
 
 /* ---- tables ---- */
 table { width:100%; border-collapse:collapse; font-size:.93rem }
