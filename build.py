@@ -586,9 +586,12 @@ def landing_page(data, base, counts, derived_count):
   <p style="font-size:clamp(1.05rem,2.5vw,1.3rem);color:var(--ink2);max-width:34em;margin:0 auto">
     Run your Windows games on Apple Silicon. Free, open source, and honest about what works —
     down to which renderer each game needs.</p>
-  <p style="margin:2.2rem 0 .75rem">
-    <a class="btn" href="https://github.com/gauthierpiarrette/highball/releases/latest/download/Highball.dmg">Download for macOS</a></p>
+  <p style="margin:2.2rem 0 .75rem;display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap">
+    <a class="btn" href="https://github.com/gauthierpiarrette/highball/releases/latest/download/Highball.dmg">Download for macOS</a>
+    <a class="btn ghost" href="/database/" style="padding:.85rem 1.6rem;font-size:1.05rem">Check your game</a></p>
   <p class="sub">notarized .dmg · auto-updating · Apple Silicon · macOS 14+ · GPL-3, no paid tier ever</p>
+  <p style="margin-top:.6rem;font-size:.9rem;color:var(--muted);max-width:30em;margin-inline:auto">
+    First run takes about 20 minutes while the engine downloads and Steam updates itself. After that, launching is instant.</p>
   <div style="margin:3rem auto 0;max-width:880px">
     <img src="/static/app.jpg" width="1600" height="1088" fetchpriority="high"
          alt="Highball's Library: one cover grid across Steam and Epic with source badges and verified verdicts"
@@ -597,14 +600,33 @@ def landing_page(data, base, counts, derived_count):
 </header>
 
 <section class="wrap">
+  <h2 style="font-size:1.6rem;text-align:center;margin-bottom:.5rem">How it works</h2>
+  <p style="text-align:center;color:var(--ink2);max-width:40em;margin:0 auto 1.6rem">No Windows licence, no virtual
+  machine, no CrossOver, and nothing to configure by hand.</p>
+  <div class="grid">
+    <div class="card"><span class="mono" style="font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--amber)">Step 1</span>
+      <h2 style="font-size:1.15rem;margin:0 0 .5rem">Install Highball</h2><p style="color:var(--ink2);font-size:.95rem">A notarized Mac app.
+      On first run it downloads a Wine engine for you, verified against a recorded checksum.</p></div>
+    <div class="card"><span class="mono" style="font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--amber)">Step 2</span>
+      <h2 style="font-size:1.15rem;margin:0 0 .5rem">Bring your games</h2><p style="color:var(--ink2);font-size:.95rem">Install Windows Steam
+      with one click, or connect your Epic account. Your existing libraries, not new purchases.</p></div>
+    <div class="card"><span class="mono" style="font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--amber)">Step 3</span>
+      <h2 style="font-size:1.15rem;margin:0 0 .5rem">Play</h2><p style="color:var(--ink2);font-size:.95rem">Each game shows what the database
+      knows about it. Where a verified fix exists, Highball can apply it for you.</p></div>
+  </div>
+</section>
+
+<section class="wrap">
   <div class="grid">
     <div class="card"><span class="mono" style="font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--amber)">One click</span>
       <h2 style="font-size:1.15rem;margin:0 0 .5rem">Steam and Epic, ready to play</h2><p style="color:var(--ink2);font-size:.95rem">A verified Wine engine is assembled from pinned,
       checksummed upstream releases. Steam installs with one click; your Epic library connects and plays through the
       open-source Legendary client. .NET and VC++ runtimes are one click too.</p></div>
     <div class="card"><span class="mono" style="font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--amber)">Per-game verdicts</span>
-      <h2 style="font-size:1.15rem;margin:0 0 .5rem">Your library, with answers</h2><p style="color:var(--ink2);font-size:.95rem">Games appear as cards with a verdict from the open
-      database: verified, reported or predicted, plus the renderer other people got working. Recipes set it for the games that have one.</p></div>
+      <h2 style="font-size:1.15rem;margin:0 0 .5rem">Your library, with answers</h2><p style="color:var(--ink2);font-size:.95rem">Every game carries a verdict:
+      verified, reported, predicted or blocked. Portal 2 froze on every map load until the cause was traced to a
+      MoltenVK bug in Source's HDR path; the <a href="/games/portal-2/">recipe now turns HDR off for you</a> and it
+      runs at 210 fps. Six games have a fix like that so far.</p></div>
     <div class="card"><span class="mono" style="font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--amber)">Open data</span>
       <h2 style="font-size:1.15rem;margin:0 0 .5rem">A database, not a promise</h2><p style="color:var(--ink2);font-size:.95rem">Every claim carries its provenance, and its date where one exists:
       verified on real hardware, reported upstream, or derived from ProtonDB crossed with anti-cheat data.
@@ -617,8 +639,9 @@ def landing_page(data, base, counts, derived_count):
       synchronisation path where the game tolerates it, which is worth real frame rate on CPU-bound titles.
       Frame caps and async shader compilation are one toggle away.</p></div>
     <div class="card"><span class="mono" style="font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--amber)">Built to last</span>
-      <h2 style="font-size:1.15rem;margin:0 0 .5rem">Whisky's lesson, learned</h2><p style="color:var(--ink2);font-size:.95rem">No Wine fork, no binary hosting, engine-agnostic by design —
-      the failure modes that ended Whisky are structurally removed. Engines update through a signed JSON manifest.</p></div>
+      <h2 style="font-size:1.15rem;margin:0 0 .5rem">Not tied to one Wine build</h2><p style="color:var(--ink2);font-size:.95rem">Highball doesn't fork Wine or host
+      engine binaries. Engines are defined in a manifest and pulled from pinned upstream releases, so the project
+      follows the wider Wine ecosystem instead of freezing against it.</p></div>
   </div>
 </section>
 
