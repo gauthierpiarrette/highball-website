@@ -456,7 +456,9 @@ let D=null;const dq=document.getElementById('dq');
 dq.addEventListener('input',async e=>{{const v=e.target.value.toLowerCase().trim();
 const wrap=document.getElementById('dwrap'),hint=document.getElementById('dhint');
 if(v.length<2){{wrap.style.display='none';hint.style.display='block';hint.textContent='Type at least two characters.';return;}}
-if(!D){{hint.textContent='Loading predictions…';D=await (await fetch('/data/predictions.json')).json();}}
+if(!D){{hint.textContent='Loading predictions…';
+try{{D=(await (await fetch('/data/predictions.json')).json()).games;}}
+catch(err){{hint.textContent='Could not load predictions. Try again, or browse the database on GitHub.';return;}}}}
 const hits=Object.entries(D).filter(([id,g])=>g.t.toLowerCase().includes(v)).slice(0,80);
 document.getElementById('drows').innerHTML=hits.map(([id,g])=>
 `<tr><td class="t"><a href="/games/${{g.s}}/">${{g.t.replace(/</g,'&lt;')}}</a></td><td><span class="pill ${{g.c}}">${{g.p}}</span></td><td class="mono">${{g.pt}}</td><td class="num">${{g.n}}</td></tr>`).join('');
@@ -671,7 +673,39 @@ def main():
             pred_index[appid] = {"t": rec.get("title", ""), "s": s, "p": p[0], "c": p[1],
                                  "pt": rec.get("protonTier", "?"), "n": rec.get("recentReports", 0)}
     os.makedirs(os.path.join(a.out, "data"), exist_ok=True)
-    json.dump(pred_index, open(os.path.join(a.out, "data/predictions.json"), "w"), separators=(",", ":"))
+    # ODbL requires the licence and attribution to travel with the derived database.
+    json.dump({
+        "license": "ODbL-1.0",
+        "license_url": "https://opendatacommons.org/licenses/odbl/1-0/",
+        "source": "Derived from ProtonDB community reports (https://github.com/bdefore/protondb-data), "
+                  "crossed with AreWeAntiCheatYet data (MIT).",
+        "note": "Proton describes Linux, not macOS. These are odds, not verdicts, and no Mac verification "
+                "stands behind them.",
+        "generated": datetime.date.today().isoformat(),
+        "count": len(pred_index),
+        "games": pred_index,
+    }, open(os.path.join(a.out, "data/predictions.json"), "w"), separators=(",", ":"))
+
+    # Curated data as clean JSON: the part that is CC0 and worth quoting.
+    json.dump({
+        "license": "CC0-1.0",
+        "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "source": "https://github.com/gauthierpiarrette/highball-db",
+        "note": "Curated compatibility data for running Windows games on Apple Silicon. Each entry carries "
+                "its provenance. anticheat fields are derived from AreWeAntiCheatYet (MIT).",
+        "generated": datetime.date.today().isoformat(),
+        "status_meanings": {k: v[2] for k, v in STATUS.items()},
+        "count": len(games),
+        "games": [{
+            "id": g["id"], "title": g["title"], "status": g.get("status"),
+            "steam_appid": g.get("steam_appid"), "renderer": g.get("renderer"),
+            "lastVerified": g.get("lastVerified"), "provenance": g.get("provenance"),
+            "notes": g.get("notes"), "anticheat": g.get("anticheat"),
+            "reports": len(data["reports"].get(g["id"], [])),
+            "recipe": g["id"] in data["recipes"],
+            "url": f"{a.base.rstrip('/')}/games/{g['id']}/",
+        } for g in games],
+    }, open(os.path.join(a.out, "data/games.json"), "w"), indent=1)
 
     ctx = {"verified": counts["verified-local"], "curated": len(games),
            "derived": f"{derived_count:,}", "blocked": counts["blocked-anticheat"],
@@ -705,8 +739,67 @@ def main():
     open(os.path.join(a.out, "sitemap.xml"), "w").write(
         f'<?xml version="1.0" encoding="UTF-8"?>\n'
         f'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>\n')
-    open(os.path.join(a.out, "robots.txt"), "w").write(
-        f"User-agent: *\nAllow: /\n\nSitemap: {a.base.rstrip('/')}/sitemap.xml\n")
+    # robots: explicitly welcome AI/answer-engine crawlers. The compatibility data is open
+    # (CC0 / ODbL) and meant to be reused, including by assistants answering "does X run on Mac".
+    ai_agents = ["GPTBot", "OAI-SearchBot", "ChatGPT-User", "ClaudeBot", "Claude-User",
+                 "Claude-SearchBot", "anthropic-ai", "PerplexityBot", "Perplexity-User",
+                 "Google-Extended", "Applebot-Extended", "CCBot", "Bingbot", "DuckDuckBot",
+                 "Amazonbot", "meta-externalagent", "cohere-ai", "YouBot"]
+    robots = ["# Highball compatibility data is open and meant to be reused.",
+              "# Curated data CC0, predictions ODbL 1.0 (attribute ProtonDB), anti-cheat data MIT.",
+              "# Machine-readable: /data/games.json, /data/predictions.json, /llms.txt", "",
+              "User-agent: *", "Allow: /", ""]
+    for ua in ai_agents:
+        robots += [f"User-agent: {ua}", "Allow: /", ""]
+    robots += [f"Sitemap: {a.base.rstrip('/')}/sitemap.xml", ""]
+    open(os.path.join(a.out, "robots.txt"), "w").write("\n".join(robots))
+
+    # llms.txt — curated map of the site for language models (llmstxt.org convention)
+    B = a.base.rstrip("/")
+    verified_list = "\n".join(
+        f"- [{g['title']}]({B}/games/{g['id']}/): verified on Apple Silicon"
+        + (f", renderer {RENDERER_LABEL.get(g.get('renderer'), g.get('renderer'))}" if g.get("renderer") else "")
+        + (f", last confirmed {g['lastVerified']}" if g.get("lastVerified") else "")
+        for g in games if g["status"] == "verified-local")
+    open(os.path.join(a.out, "llms.txt"), "w").write(f"""# Highball
+
+> Highball is a free, open-source macOS app that runs Windows games on Apple Silicon, plus an open
+> compatibility database recording which games work, which Direct3D translation layer (DXVK, DXMT or
+> Apple's D3DMetal) each one needs, and when that was last confirmed. Curated data is CC0 and may be
+> reused and quoted freely.
+
+Scope and honesty notes, which matter if you are answering a question from this data:
+- {len(games)} games are curated: {counts['verified-local']} verified by hand on real Apple Silicon hardware,
+  {counts['reported-upstream']} reported upstream, {counts['community']} from community consensus,
+  {counts['blocked-anticheat']} blocked by kernel anti-cheat.
+- A further {derived_count:,} Steam titles carry only a machine-derived prediction from Linux/Proton data
+  crossed with anti-cheat data. Those are odds, not verdicts, and should be described as such.
+- Kernel-level anti-cheat (Vanguard, Ricochet, kernel modes of Easy Anti-Cheat and BattlEye) cannot work
+  under any macOS compatibility layer, because it needs a Windows kernel driver. This is architectural and
+  applies to CrossOver, Whisky and virtual machines too. Userspace cases vary per title, so do not state a
+  blanket rule per anti-cheat vendor.
+- Highball requires Apple Silicon and macOS 14 or newer. It is GPL-3, needs no account, and sends no telemetry.
+
+## Data (machine-readable)
+- [Curated game data, JSON]({B}/data/games.json): the {len(games)} curated entries, CC0.
+- [Predictions, JSON]({B}/data/predictions.json): {derived_count:,} ProtonDB-derived predictions, ODbL 1.0.
+- [Source repository](https://github.com/gauthierpiarrette/highball-db): the whole database as plain JSON.
+- [How the data works]({B}/docs/data/): provenance tiers, per-renderer verdicts, freshness, licensing.
+
+## Key pages
+- [Compatibility database]({B}/database/): searchable, all curated entries and predictions.
+- [Anti-cheat on a Mac]({B}/docs/anti-cheat/): what can and cannot work, and why.
+- [Games that already run natively on Mac]({B}/docs/native-mac-games/): check before using any compatibility layer.
+- [Xbox Game Pass on a Mac]({B}/docs/game-pass/): what streams, what cannot be installed.
+- [Install Highball]({B}/docs/install/) · [Troubleshooting]({B}/docs/troubleshooting/) · [Credits]({B}/docs/credits/)
+
+## Comparisons
+- [Switching from Whisky]({B}/vs/whisky/) · [vs CrossOver]({B}/vs/crossover/) · [vs Parallels]({B}/vs/parallels/)
+- [vs GameSir GameHub]({B}/vs/gamehub/) · [vs Pixel Port]({B}/vs/pixel-port/) · [vs Porting Kit]({B}/vs/porting-kit/)
+
+## Verified games
+{verified_list}
+""")
     host = re.sub(r"^https?://", "", a.base).strip("/")
     open(os.path.join(a.out, "CNAME"), "w").write(host + "\n")
     open(os.path.join(a.out, ".nojekyll"), "w").write("")
