@@ -1,0 +1,74 @@
+name: Build and deploy
+
+on:
+  push:
+    branches: [main]
+  # highball-db can trigger a content rebuild:
+  #   gh api repos/gauthierpiarrette/highball-website/dispatches -f event_type=db-updated
+  repository_dispatch:
+    types: [db-updated]
+  # catch data changes even if nobody dispatches
+  schedule:
+    - cron: "27 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out site
+        uses: actions/checkout@v4
+
+      - name: Check out highball-db
+        uses: actions/checkout@v4
+        with:
+          repository: gauthierpiarrette/highball-db
+          path: .highball-db
+
+      - name: Build
+        run: python3 build.py --db .highball-db --out dist
+
+      - name: Sanity check the output
+        run: |
+          set -e
+          test -s dist/index.html
+          test -s dist/database/index.html
+          test -s dist/sitemap.xml
+          test -s dist/CNAME
+          test -s dist/data/predictions.json
+          # every curated game in the db must have produced a page
+          expected=$(ls .highball-db/db/games/*.json | wc -l | tr -d ' ')
+          # count game dirs that are NOT noindex (curated pages only)
+          actual=$(grep -L 'name="robots" content="noindex' dist/games/*/index.html | wc -l | tr -d ' ')
+          echo "curated pages: $actual (db entries: $expected)"
+          test "$actual" -eq "$expected"
+          # the sitemap must never contain a noindex page
+          ! grep -qE '<loc>[^<]*/games/' dist/sitemap.xml || \
+            for u in $(grep -oE '/games/[^<]*' dist/sitemap.xml); do
+              grep -q 'noindex' "dist${u}index.html" && { echo "noindex page in sitemap: $u"; exit 1; } || true
+            done
+          echo "OK"
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

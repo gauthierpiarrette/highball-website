@@ -1,0 +1,132 @@
+<!-- Highball vs Parallels Desktop for gaming on Apple Silicon | Parallels runs a whole Windows 11 VM, costs $99.99 a year and stops at DirectX 11. Highball translates directly and is free. When each one wins. -->
+<h1>Highball vs Parallels Desktop for gaming</h1>
+
+<p>Both let you play Windows games on an Apple Silicon Mac, by completely different routes.</p>
+
+<p>Parallels Desktop runs a real, licensed copy of Windows 11 for ARM inside a virtual machine. Highball has no
+Windows in it at all. It translates the Windows API calls a game makes into macOS calls, and its DirectX into
+Metal, in one ordinary Mac process.</p>
+
+<h2>The double translation tax</h2>
+
+<p>Your Mac is ARM. Almost every Windows game is x86-64. Something has to bridge that gap, and in a VM two
+separate things do.</p>
+
+<ul>
+<li>Microsoft's Prism emulator, running inside the Windows guest, turns the game's x86 instructions into ARM ones.</li>
+<li>Parallels' paravirtual GPU driver then carries the game's DirectX calls across the hypervisor boundary and
+turns them into Metal.</li>
+</ul>
+
+<p>All of it inside a virtual machine with a fixed slice of your CPU cores and RAM, next to a second operating
+system that is also running, updating and indexing while you play.</p>
+
+<p>Highball skips the second boundary. No guest OS, no hypervisor, no virtual GPU. To be fair: x86 game code
+still has to become ARM code under Highball too, so that cost is not free on either side. What disappears is
+everything else, plus the tens of gigabytes of Windows on your disk.</p>
+
+<p>Tom's Guide tried gaming in a VM on an M1 Max and titled the piece "it was a disaster". The graphics driver
+has improved a lot since then. The architecture they were fighting has not.</p>
+
+<h2>No DirectX 12 in the VM</h2>
+
+<p>Parallels' guest graphics driver supports DirectX up to 11.1. Parallels Desktop 27, released 2026-08-25,
+shipped a Metal-based OpenGL 4.3 driver that Parallels claims is up to 2.6x faster than the old one. Real
+engineering, aimed at professional apps. There is still no DirectX 12 path in the VM.</p>
+
+<p>Highball switches renderers per bottle. D3DMetal, which comes from Apple's Game Porting Toolkit, and DXMT
+both cover DirectX 12; DXVK handles the older DirectX versions. If a game is DX12-only, a VM cannot run it and
+Highball can at least try.</p>
+
+<p>Honest caveat on that switching: the compatibility database currently has zero games with two dated renderer
+verdicts, so there is no data yet telling you which renderer is faster for a given title. You switch and you
+test. <a href="/docs/data/">How the data is built</a>.</p>
+
+<h2>Anti-cheat is a wash</h2>
+
+<p>A virtual machine does not rescue Fortnite or Valorant. Kernel-level anti-cheat wants to load a Windows
+kernel driver and inspect the machine, and it treats a hypervisor guest as hostile. Parallels' own support
+pages admit games with anti-cheat may fail to launch, which does not stop their gaming page from showcasing
+Warzone and Rocket League.</p>
+
+<p>Highball's position is identical, just stated earlier: 39 games in the database are marked blocked by kernel
+anti-cheat and flagged in your library before you download anything. Userspace anti-cheat is a per-title
+question, not a blanket no. Helldivers&nbsp;2 and Elden Ring both run under translation.
+<a href="/docs/anti-cheat/">Full explanation here.</a></p>
+
+<div class="note bad"><strong>Neither tool solves anti-cheat.</strong> If you want Fortnite, Valorant or Call
+of Duty multiplayer, do not buy Parallels hoping a VM changes the answer. Cloud streaming is the only
+route.</div>
+
+<h2>Side by side</h2>
+
+<div class="tablewrap">
+<table>
+<thead><tr><th></th><th>Parallels Desktop</th><th>Highball</th></tr></thead>
+<tbody>
+<tr><td>Approach</td><td>Windows 11 ARM VM</td><td>API translation, no Windows</td></tr>
+<tr><td>Price</td><td>$99.99/yr Standard, or $129.99 perpetual</td><td>Free, GPL-3</td></tr>
+<tr><td>Windows licence</td><td>Required, on top</td><td>Not needed</td></tr>
+<tr><td>DirectX ceiling</td><td>11.1</td><td>12, via D3DMetal or DXMT</td></tr>
+<tr><td>Kernel anti-cheat</td><td><span class="pill bad">Fails</span></td><td><span class="pill bad">Fails</span></td></tr>
+<tr><td>Non-game Windows apps</td><td><span class="pill good">All of them</span></td><td>Not the target</td></tr>
+<tr><td>Every launcher</td><td><span class="pill good">Yes</span></td><td>Steam, Epic, Battle.net</td></tr>
+<tr><td>Onboarding</td><td><span class="pill good">Best in the category</span></td><td>Young, one-click Steam</td></tr>
+<tr><td>Compatibility data</td><td>None published</td><td><a href="/database/">Open database</a></td></tr>
+<tr><td>Source</td><td>Closed, PE-owned</td><td>Open, no account, no telemetry</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2>Where Parallels is genuinely better</h2>
+
+<p><strong>Onboarding.</strong> Nothing else in the category is close. First launch offers to fetch Windows 11
+for you, downloads the ARM image, installs it, installs the guest tools and lands you at a working desktop. No
+ISO hunting, no configuration. They have refined that flow since 2006 and it is why a million people pay for
+it. Highball's equivalent first run is days old.</p>
+
+<p><strong>It runs everything.</strong> A VM is a whole PC, so every launcher and every Windows program works,
+including the ones Highball cannot. Launchers built on the embedded Chromium framework, which includes GOG
+Galaxy, Ubisoft Connect and the Rockstar launcher, do not work under Highball right now. That is an
+engine-level bug filed upstream, not a setting you can flip.</p>
+
+<p><strong>Coherence mode.</strong> Windows apps as ordinary Mac windows, no Windows desktop visible. Still
+the best demo in the product.</p>
+
+<p><strong>Trust signals.</strong> Parallels is Microsoft's only authorized third-party way to run Windows 11
+on Apple Silicon, is listed on Microsoft's own support pages, carries SOC 2, and has a phone number. Highball
+is one developer, a notarized DMG and a GitHub repo. That difference matters to some people and it should.</p>
+
+<h2>When a VM is the right answer</h2>
+
+<ul>
+<li><strong>Windows software that is not a game.</strong> Line-of-business apps, CAD, anything expecting real
+Windows services. Highball is not trying to serve this and you should not make it.</li>
+<li><strong>You need the full Windows desktop.</strong> File Explorer, drivers, a domain-joined machine, a
+Windows-only development environment.</li>
+<li><strong>A launcher Highball cannot run.</strong> If your library lives in GOG Galaxy or Ubisoft Connect,
+today the VM is your option.</li>
+<li><strong>You want a vendor to call.</strong> Fair.</li>
+</ul>
+
+<p>If you need a VM but the price stings, VMware Fusion has been free for all users, commercial included, since
+November 2024: DirectX 11-class 3D, without Microsoft's authorization or Parallels' polish. UTM is free and
+open source but has no 3D acceleration for Windows guests, so it is a non-starter for games.</p>
+
+<h2>Which should you use</h2>
+
+<p>For gaming specifically, the VM is the worst-value option on the board: roughly $100 a year plus a Windows
+licence, to get a DirectX 11 ceiling, two layers of translation and the same anti-cheat failures you would get
+for free. Try Highball first: notarized DMG, auto-updating, Apple Silicon and macOS 14 or newer.</p>
+
+<p>Do not pick Highball if you need Windows itself rather than a game, if your games live in a launcher it
+cannot start yet, or if you want a support contract instead of a GitHub issue tracker. Those are real reasons
+and Parallels answers them properly. Its 14-day trial is long enough to check.</p>
+
+<p>Check the specific game before you spend money either way. The database has 101 curated entries, 5 of them
+verified by hand on real hardware, plus 12,491 ProtonDB-derived predictions, labelled as predictions rather
+than dressed up as tests.</p>
+
+<p><a class="btn" href="https://github.com/gauthierpiarrette/highball/releases/latest/download/Highball.dmg">Download
+Highball</a> <span class="sub">Free. <a href="/docs/install/">Install guide</a> ·
+<a href="/database/">Check your game</a> · <a href="/vs/">Other comparisons</a></span></p>

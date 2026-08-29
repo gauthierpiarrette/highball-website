@@ -1,0 +1,32 @@
+<!-- Install Highball — Windows games on Apple Silicon | How to install Highball on macOS: requirements, the notarized DMG, what happens on first launch, and how to uninstall it cleanly. -->
+<h1>Install Highball</h1>
+<p>Highball is a free, open-source Mac app. It is signed with an Apple Developer ID and notarized by Apple,
+so it opens without any warnings when you download it the normal way.</p>
+
+<h2>Requirements</h2>
+<ul>
+  <li><b>Apple Silicon</b> (M1 or newer). Intel Macs are not supported.</li>
+  <li><b>macOS 14 Sonoma or newer.</b></li>
+  <li>Around 8&nbsp;GB of free space for the engine and a first bottle, plus whatever your games need.</li>
+  <li>Rosetta 2, which macOS installs for you the first time it is needed.</li>
+</ul>
+
+<h2>Download</h2>
+<p><a class="btn" href="https://github.com/gauthierpiarrette/highball/releases/latest/download/Highball.dmg">Download Highball.dmg</a></p>
+<p>Open the disk image, drag Highball to Applications, and launch it. That is the whole installation.
+The app updates itself from then on.</p>
+
+<h2>First launch</h2>
+<p>Highball walks you through downloading a Wine engine, which takes a few minutes on a normal connection.
+The engine is assembled from pinned upstream releases, each one checked against a recorded SHA-256, so you
+get exactly the build that was tested. After that you create a bottle, install Steam or connect Epic with
+one click, and your library appears with a compatibility verdict on each game.</p>
+
+<h2>Uninstalling</h2>
+<p>Drag the app to the Trash. Everything else lives in
+<code>~/Library/Application Support/Highball</code>, which holds your engines, bottles and games. Delete that
+folder too if you want the disk space back, but note that your installed games live inside it.</p>
+
+<h2>If macOS says it cannot verify the app</h2>
+<p>That means the download was damaged in transit, almost always by a third-party unarchiver.
+<a href="/docs/troubleshooting/">Here is what happened and how to fix it.</a></p>

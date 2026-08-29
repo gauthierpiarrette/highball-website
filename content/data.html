@@ -1,0 +1,49 @@
+<!-- How the compatibility data works | Provenance tiers, per-renderer verdicts, freshness stamps, licensing, and how to contribute a result to Highball's open database. -->
+<h1>How the data works</h1>
+<p>Compatibility claims about Mac gaming age badly. An engine bump, a macOS update or a game patch can turn a
+working title into a broken one overnight, and most compatibility lists never tell you when their answer was
+last true. This database is built to avoid that.</p>
+
+<h2>Four tiers, and what each one means</h2>
+<ul>
+  <li><b>Verified</b> ({verified} games) — run on real Apple Silicon hardware, with the engine build, renderer
+      and macOS version recorded.</li>
+  <li><b>Reported upstream</b> — named as working or fixed in upstream release notes, but not confirmed here.</li>
+  <li><b>Community</b> — consensus from AppleGamingWiki, r/macgaming or user reports, unverified by Highball.</li>
+  <li><b>Blocked</b> ({blocked} games) — kernel anti-cheat, so structurally impossible.
+      <a href="/docs/anti-cheat/">Why.</a></li>
+</ul>
+<p>Separately, {derived} Steam titles carry a <b>prediction</b>: recent ProtonDB verdicts crossed with
+anti-cheat data. Proton describes Linux, which has a different graphics stack and different failure modes,
+so a prediction is odds rather than an answer. Those pages are deliberately kept out of search results until
+somebody confirms a result on an actual Mac.</p>
+
+<h2>Per renderer, not per game</h2>
+<p>Most compatibility lists give a game one verdict. That is not enough here, because Highball can run the
+same game through three different Direct3D translation layers, and which one works varies wildly by title.
+Portal&nbsp;2 needs DXVK. Assetto Corsa wants D3DMetal. A game that black-screens under one renderer often
+runs fine under another, so a single verdict throws away the part you actually need.</p>
+<p>Every game page therefore shows a row per renderer, and says plainly when a row is untested. Empty rows are
+open questions rather than failures, and they are the fastest thing for a contributor to fill in.</p>
+
+<h2>Dates, not rumours</h2>
+<p>Verdicts carry the engine build and macOS version they were seen on. This matters more than it sounds:
+several titles work only on specific combinations, and a result from an older engine can be actively
+misleading today. A claim without a date is a rumour, so the database shows the date it has, or admits it has
+none.</p>
+
+<h2>Licensing</h2>
+<p>Curated entries, recipes and verification results are <b>CC0</b>. Take them, fork them, ship them in your
+own tool, no attribution required. The ProtonDB-derived prediction table is <b>ODbL 1.0</b> with attribution,
+because that is what its source requires, and the anti-cheat data keeps AreWeAntiCheatYet's MIT notice. The
+split is deliberate: the parts we generate are as free as we can make them, and the parts we borrow keep their
+original terms.</p>
+
+<h2>Contributing</h2>
+<p>A report takes a minute and is the only way the empty rows get filled.
+<a href="https://github.com/gauthierpiarrette/highball-db/issues/new?template=report.yml">Send one here</a> —
+the game, your chip, your macOS version, the renderer you used, and whether it worked. Negative results are
+just as useful as positive ones, and often more so.</p>
+<p>The whole database lives at
+<a href="https://github.com/gauthierpiarrette/highball-db">github.com/gauthierpiarrette/highball-db</a> as
+plain JSON.</p>

@@ -1,0 +1,103 @@
+<!-- Xbox Game Pass on a Mac: cloud works, local install does not | Xbox Cloud Gaming runs in any Mac browser with a controller and no install. The Xbox PC app and Game Pass titles cannot run under a compatibility layer. -->
+<h1>Xbox Game Pass and Xbox Cloud Gaming on a Mac</h1>
+<p>Xbox is one of the launchers people ask about most in Mac gaming threads, and it is the one Highball cannot
+help with at all. So here is the straight answer rather than a pitch.</p>
+<p>Streaming works. Installing does not. Xbox Cloud Gaming runs in a browser on macOS today, with no install
+and no translation layer. The Xbox PC app, and every Game Pass PC title with it, does not run under Wine,
+CrossOver, Whisky or Highball, and that is not a bug anyone is close to fixing.</p>
+
+<div class="note">
+<b>To play a Game Pass game on your Mac tonight:</b> subscribe to a tier with cloud, open
+<a href="https://www.xbox.com/play">xbox.com/play</a> in Safari or Chrome, pair a controller. That is the
+whole setup, and Highball is not part of it.
+</div>
+
+<h2>What works: cloud streaming in a browser</h2>
+<p>Xbox Cloud Gaming on macOS is browser only; Microsoft has never shipped a Mac app. Safari, Chrome and Edge
+are supported, with Safari requiring macOS 14.1.2 or newer. Mouse and keyboard input on a Mac works in Chrome
+and Edge but not Safari, so if the game is not built for a gamepad, use Chrome.</p>
+<p>Microsoft's floor is 10&nbsp;Mbps, with 20&nbsp;Mbps recommended on a computer, over Ethernet or
+5&nbsp;GHz Wi-Fi. Treat 20 as the real number. Browser streaming has historically been 1080p.</p>
+<p>Cloud is included on all three paid tiers as of August 2026:</p>
+
+<div class="tablewrap">
+<table>
+  <tr><th>Tier</th><th>Price/mo (US)</th><th>On a Mac</th></tr>
+  <tr><td>Essential</td><td>$9.99</td><td>Cloud, smallest catalogue</td></tr>
+  <tr><td>Premium</td><td>$14.99</td><td>Cloud, 200+ games, first-party about a year late</td></tr>
+  <tr><td>Ultimate</td><td>$22.99</td><td>Cloud, 500+ games, day-one first-party</td></tr>
+</table>
+</div>
+<p class="sub">Ultimate was cut from $29.99 to $22.99 in April 2026 after the price rise went badly, and new
+Call of Duty releases no longer arrive day one. PC Game Pass is a separate $13.99 tier built around
+installing games on a Windows PC, which is exactly the part a Mac cannot do.</p>
+
+<h3>Games you already own</h3>
+<p>"Stream Your Own Game" covers over 1,000 titles on all three paid tiers. The catch matters: you have to own
+the game digitally through the Microsoft or Xbox store. A Steam copy does not qualify, and neither does a
+disc. If your library is on Steam, this feature does nothing for you.</p>
+<p>A free ad-supported tier has been in Xbox Insider testing since July 2026: about two minutes of pre-roll
+ads, one-hour sessions, roughly five hours a month, own games only. Test values, subject to change.</p>
+
+<h2>What does not work: the Xbox app and Game Pass PC installs</h2>
+<p>People try this every few weeks. It fails structurally.</p>
+<ul>
+  <li>Game Pass PC titles ship as encrypted MSIXVC packages in a protected <b>WindowsApps</b> folder users
+      cannot open. The executable is decrypted on demand at launch.</li>
+  <li>Launching runs through Microsoft's Game Development Kit runtime, which checks the licence against Xbox
+      identity services via a Windows-only library. There is no plain .exe to point a bottle at.</li>
+  <li>The Microsoft Store installs appx and msixbundle packages through Windows app-container infrastructure
+      that Wine does not implement.</li>
+</ul>
+<p>CodeWeavers, who sell the most capable commercial Wine build there is, state plainly that you cannot
+download PC Game Pass games through <a href="/vs/crossover/">CrossOver</a>. Highball is Wine-based and hits
+the same wall. A project called Xodus reported cracking Xbox authentication and package decryption in August
+2026, but end-to-end launch was unfinished and it targets Linux.</p>
+<p>This is a different failure from anti-cheat, which blocks 39 games in the database.
+<a href="/docs/anti-cheat/">Anti-cheat is a kernel problem</a>; Game Pass is a licensing one. Both are
+permanent.</p>
+
+<h2>What streaming costs you</h2>
+<p>Cloud wins one thing absolutely: the game runs on a real Windows machine, so compatibility is never a
+question. Every tile is guaranteed to work, and Highball cannot say that about any title. The trades:</p>
+<ul>
+  <li><b>Latency.</b> Encode, transit and decode add tens of milliseconds no faster Mac removes. Fine for most
+      single-player games, noticeable in anything twitchy.</li>
+  <li><b>A bandwidth floor.</b> No usable play on a plane, a train or hotel Wi-Fi. Offline is not a mode.</li>
+  <li><b>No mods, no files.</b> You cannot touch the install, the config or the save directory.</li>
+  <li><b>Rent forever.</b> $120 to $276 a year, and the catalogue is on loan. Games leave Game Pass regularly,
+      and access ends when you stop paying.</li>
+  <li><b>Session limits.</b> Services cap session length, and free tiers cap monthly hours.</li>
+</ul>
+
+<h2>GeForce NOW, the other option</h2>
+<p>If you already have a Steam library, GeForce NOW is usually the better cloud service on a Mac. It has a
+native Apple&nbsp;Silicon app rather than a browser tab, it streams games you own on Steam, Epic, GOG,
+Ubisoft and Battle.net, and its free tier gives one-hour sessions with ads in the queue. Paid tiers are $9.99
+and $19.99 a month, with a 100-hour monthly cap added in January 2026.</p>
+<p>Its limit is publisher opt-in. Rockstar pulled its catalogue in 2019 and never came back, so there is no
+GTA. Check the supported list before subscribing.</p>
+
+<h2>When Steam plus Highball is the better move</h2>
+<p>Pay once for the game instead of forever for the service when most of these hold: you want it long term, you
+want mods or config access, you play offline or while travelling, and it is not blocked by kernel anti-cheat.
+<a href="/database/">Check the database first</a>. It carries 101 curated games, of which 5 are verified by
+hand on real Apple&nbsp;Silicon hardware, plus 12,491 ProtonDB-derived predictions that are odds rather than
+answers. It records a row per renderer, but no game yet has two dated renderer verdicts, so that picture is
+mostly empty. <a href="/docs/data/">How the data works.</a></p>
+<p>Highball is free, GPL-3, no account, no telemetry, notarized, Apple Silicon on macOS&nbsp;14 or later.
+Steam is one click, Epic goes through the open-source Legendary client, and each bottle switches between
+DXVK, DXMT and D3DMetal.
+<a href="/docs/install/">Install guide</a>, <a href="/docs/troubleshooting/">troubleshooting</a>.</p>
+
+<h2>Which should you use</h2>
+<p><b>You want a specific Game Pass game and nothing else.</b> Subscribe and stream it in a browser. There is
+no local path and no clever workaround. Do not install Highball for this.</p>
+<p><b>You already own the game on Steam.</b> Xbox Cloud will not stream it. Try Highball first, since it costs
+nothing to find out, and fall back to GeForce NOW if the title is unsupported or your Mac is a base model.</p>
+<p><b>You play competitive shooters with kernel anti-cheat.</b> Stream it. Not a close call, and Highball will
+never serve you here.</p>
+<p><b>You want to own, mod and play offline at no monthly cost.</b> Buy on Steam and run it in Highball, after
+checking the verdict.</p>
+<p><a class="btn" href="https://github.com/gauthierpiarrette/highball/releases/latest/download/Highball.dmg">Download Highball</a></p>
+<p class="sub">Prices and tiers checked 29 August 2026. Verify at xbox.com before subscribing.</p>

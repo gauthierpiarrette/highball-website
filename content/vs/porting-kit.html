@@ -1,0 +1,100 @@
+<!-- Highball vs Porting Kit and the Wineskin wrapper lineage | Porting Kit wraps each game into its own Mac app with a decade of tested recipes. Highball manages bottles with one shared engine and open data. -->
+<h1>Highball vs Porting Kit</h1>
+<p>Porting Kit is a free Mac app by VitorMM and PaulTheTall, running since around 2015. You pick a game from an
+in-app catalogue of roughly 1,500 hand-tested titles, it fetches the right engine and setup steps, and you get
+a double-clickable app. It is closed source, funded by donations and affiliate links to CrossOver and GOG.</p>
+<p>Underneath it sits the Wineskin lineage: doh123's Wineskin from 2011, then Gcenx's unofficial fork, then
+Kegworks in 2024, renamed to <b>Sikarugir</b> around October 2025. That is the wrapper toolkit; Porting Kit
+is the curated catalogue on top of it.</p>
+<p>Highball is a bottle manager rather than a wrapper builder, and that choice explains nearly every
+difference below.</p>
+
+<h2>Wrapper versus bottle</h2>
+<p>A wrapper is a self-contained macOS app. Inside the bundle is a Wine engine, a Windows prefix and that
+game's configuration, all copied in. It lands in Applications and it is finished.</p>
+<p>A bottle is a Windows environment managed by an app that stays around. Highball keeps one engine store and
+one library window, and bottles point at the shared engine instead of embedding a copy.</p>
+
+<div class="tablewrap">
+<table>
+  <tr><th></th><th>Porting Kit</th><th>Sikarugir</th><th>Highball</th></tr>
+  <tr><td>Model</td><td>Curated wrapper catalogue</td><td>Wrapper toolkit</td><td>Bottle manager</td></tr>
+  <tr><td>What you get</td><td>One .app per game</td><td>One .app per game</td><td>Bottles inside one library app</td></tr>
+  <tr><td>Engine updates</td><td>Per wrapper</td><td>Per wrapper</td><td>One shared engine, updated once</td></tr>
+  <tr><td>Store launchers</td><td>Recipes per store</td><td>Manual, via winetricks</td><td>One-click Steam and Epic, Battle.net recipe</td></tr>
+  <tr><td>Runs on</td><td>macOS 12+, Apple Silicon and Intel builds since Nov 2025</td><td>macOS 14+, Intel binary, needs Rosetta 2</td><td>Apple Silicon, macOS 14+</td></tr>
+  <tr><td>Delivery</td><td>Freeware DMG</td><td>Homebrew tap, ad-hoc signed, not notarized</td><td>Notarized DMG, auto-updating</td></tr>
+  <tr><td>Source</td><td>Closed</td><td>Mixed: Configure.app LGPL-2.1, Creator and Launcher closed, main repo unlicensed</td><td>GPL-3</td></tr>
+  <tr><td>Cost</td><td>Free <span class="pill info">donations, affiliate</span></td><td>Free <span class="pill info">donations</span></td><td>Free <span class="pill good">no account, no telemetry</span></td></tr>
+</table>
+</div>
+
+<h2>Where the wrapper model genuinely wins</h2>
+<p>This one is not close. A finished wrapper is a first-class Mac citizen. Its own icon in Applications,
+findable in Spotlight, keepable in the Dock, copyable to another Mac. Delete the tool that built it and the
+game is unaffected. Nothing has to be running for you to double-click and play.</p>
+<p>Highball does not produce that today. A Highball game is launched from Highball. If the standalone icon
+matters most to you, the wrapper lineage is the only place to get it, and Porting Kit is the friendliest way
+in.</p>
+
+<div class="note">
+<p><b>The trade:</b> a bottle manager gives up the per-game Mac app in exchange for shared engines and one
+library. That is right for a lot of people and wrong for some.</p>
+</div>
+
+<h2>Where Porting Kit's catalogue wins</h2>
+<p>Ten years of recipes is ten years of recipes. Porting Kit's library leans hard into late-90s through
+mid-2010s PC games, and for those titles it holds knowledge that took a decade of testing to accumulate: the
+right engine, the right winetricks, the installer quirk that breaks on step four. Highball's curated database
+has 101 games in it. For retro and older Windows titles, Porting Kit is deeper and will stay deeper for a
+long time. PaulTheTall also writes the ports up individually, which is why those pages usually turn up when
+you search an old game plus "Mac".</p>
+
+<h2>Where the bottle model pays off</h2>
+<p>Every wrapper embeds its own copy of Wine. That is the price of being self-contained: thirty wrappers is
+thirty engines on disk, and no central place to move them forward when a build fixes something. Highball
+updates one engine and every bottle gets it.</p>
+<p>Renderers work the same way. Highball switches a bottle between DXVK, DXMT and D3DMetal from that bottle's
+settings. The matrix is the same one Sikarugir exposes, because it is the same upstream supply. What differs
+is where you change it and how long the round trip takes.</p>
+<p>Launcher automation is the other split. Highball installs Steam in one click and Epic through the
+open-source Legendary client, and has a Battle.net recipe. In Sikarugir, Steam is a manual winetricks job with
+a hand-typed path. Porting Kit sits in between, for the titles it covers.</p>
+
+<h2>The data, including the gap</h2>
+<p>Highball's compatibility database is public and reusable: 101 curated games, 5 verified by hand on real
+Apple Silicon hardware, 39 blocked by kernel anti-cheat, plus 12,491 predictions derived from ProtonDB.
+Curated data is CC0, predictions carry ODbL as their source requires, anti-cheat data keeps its MIT notice.
+Porting Kit's equivalent knowledge sits inside a closed app.</p>
+<p>The database records verdicts per renderer rather than one per game, because a title that black-screens
+under one translation layer often runs under another. Coverage of that is currently nothing:
+<b>no game has two dated renderer verdicts yet</b>. The rows exist and are empty. That is the schema, not a
+coverage claim. <a href="/docs/data/">How the data works</a>, and
+<a href="/database/">the database itself</a>.</p>
+<p>Anti-cheat cuts across all three tools identically. Kernel anti-cheat cannot run under Wine on macOS.
+Userspace cases vary by title, so check the game rather than the vendor.
+<a href="/docs/anti-cheat/">Detail here.</a></p>
+
+<h2>Sikarugir is upstream, not the enemy</h2>
+<p>Gcenx maintains the macOS Wine builds Highball downloads. The engine Highball ships is one of his, as are
+the macOS DXVK and DXMT builds much of this ecosystem runs on and the official WineHQ macOS packages.
+Highball does not fork any of it: it pins upstream releases, and engine-level bugs get filed on his tracker
+rather than patched over quietly. If you want to support the layer that makes any of this work, support that
+one first. <a href="/docs/credits/">Credits and where to send money.</a></p>
+<p>Sikarugir's README says it is not a replacement for CrossOver. That is fair. It is a power tool for
+people who want a permanent, portable wrapper and full control of the prefix.</p>
+
+<h2>Which should you use</h2>
+<p>Use <b>Porting Kit</b> if your list is mostly older Windows games, if you want a standalone app per game
+with its own Dock icon, or if you are on an Intel Mac. Highball is Apple Silicon only, so on Intel there is no
+choice to make.</p>
+<p>Use <b>Sikarugir</b> if you want to build wrappers yourself, hand a port to someone else, or run non-game
+Windows software no catalogue covers. Expect Homebrew, Rosetta 2 and a two-app workflow.</p>
+<p>Use <b>Highball</b> if you want one library window, modern titles, Steam and Epic working without setup,
+per-bottle renderer switching, and a notarized app that updates itself. If you own your games on a store
+rather than as loose installers, this is the shorter path.</p>
+<p>If you would rather pay for support and a much larger tested catalogue, CrossOver is the honest answer.
+<a href="/vs/crossover/">That comparison is here.</a></p>
+<p><a class="btn" href="https://github.com/gauthierpiarrette/highball/releases/latest/download/Highball.dmg">Download Highball</a>
+<span class="sub"><a href="/docs/install/">Install guide</a> and
+<a href="/docs/troubleshooting/">troubleshooting</a>.</span></p>

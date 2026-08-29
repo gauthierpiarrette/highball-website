@@ -1,0 +1,39 @@
+<!-- Anti-cheat on Mac: what can and cannot work | Why kernel-level anti-cheat can never run under Wine on macOS, which games are affected, and what your real options are. -->
+<h1>Anti-cheat on a Mac</h1>
+<p>This is the single most common reason a game will not run on your Mac, and it is the one problem no
+compatibility layer will ever solve. It is worth understanding before you spend an evening and 80&nbsp;GB
+finding out.</p>
+
+<h2>Why kernel anti-cheat cannot work</h2>
+<p>Anti-cheat systems like Vanguard, Ricochet and the kernel modes of Easy Anti-Cheat and BattlEye load a
+Windows kernel driver. They run underneath the game, inside the operating system itself, precisely so that
+cheats running as ordinary programs cannot hide from them.</p>
+<p>A translation layer such as Wine runs entirely in user space. It converts Windows API calls into macOS
+ones inside a normal process. There is no Windows kernel underneath it, so there is nothing for a Windows
+kernel driver to load into. This is not a missing feature or a bug that will be fixed in a later release. It
+is the architecture.</p>
+<p>Anti-cheat vendors can enable support for Linux, and several have, because Proton runs on a Linux kernel
+that those vendors can target. That route does not extend to macOS, and no vendor has announced plans to
+make it.</p>
+
+<h2>What that rules out</h2>
+<p>{blocked} games in the database are marked blocked for this reason. The list includes Fortnite, Valorant,
+Destiny&nbsp;2, Call of Duty, and the online modes of several games whose single-player campaigns work fine.
+Highball marks them in your library before you download anything.</p>
+
+<h2>What still works</h2>
+<p>Plenty. Anti-cheat that runs in user space, or that is only active in multiplayer, often behaves. Several
+games with anti-cheat in their online modes are completely playable single-player, which is why the database
+records a verdict per title rather than a blanket rule per anti-cheat vendor. Helldivers&nbsp;2 and Elden Ring
+are both examples of games people successfully play on Macs despite carrying anti-cheat.</p>
+<p>So the honest answer is: check the specific game rather than assuming.
+<a href="/database/">The database is here.</a></p>
+
+<h2>If the game you want is blocked</h2>
+<p>Cloud streaming is the only real answer. The game runs on a real Windows machine in a datacentre, so the
+anti-cheat is satisfied, and you watch the video.
+<a href="https://www.nvidia.com/en-us/geforce-now/">GeForce NOW</a> has a native Mac app and
+<a href="https://www.xbox.com/play">Xbox Cloud Gaming</a> runs in a browser. Both cost money every month and
+neither lets you mod anything, but for a competitive shooter that is often the trade you want anyway.</p>
+<p>If the game has a native Mac build, use it. A native build beats translation every time, and it is worth
+checking before assuming you need Highball at all.</p>

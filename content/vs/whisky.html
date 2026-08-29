@@ -1,0 +1,101 @@
+<!-- Switching from Whisky: what to use now on Apple Silicon | Whisky was archived in 2025 and froze at Wine 7.7. Here is what happened, how to move your games to Highball, and when the community fork is better. -->
+<h1>Switching from Whisky</h1>
+<p>Whisky was the free Mac Wine app almost everyone used, and it was good: 39 releases in two years and over
+a million downloads. Its site now says it is no longer maintained and that you should buy CrossOver instead.</p>
+<p>The deprecated Homebrew cask still does about 31,400 installs a year, so people are still finding out the
+hard way. This page is for them.</p>
+
+<h2>What happened</h2>
+<p>The last release was v2.3.5 on 5 April 2025, fixing a crash macOS 15.4 introduced. The maintenance notice
+landed on 9 April and the repository was archived a month later.</p>
+<p>Isaac Marovitz gave two reasons. He was an unpaid student carrying the support load for a user base in the
+hundreds of thousands. And he had concluded that Whisky was bad for Wine on the Mac: macOS support is kept
+alive largely by CodeWeavers, funded by CrossOver sales, and Whisky was a free wrapper built from CrossOver's
+own sources. In his words, <i>"The revenue from CrossOver is what keeps Wine on Mac alive… TLDR; Whisky harms
+Wine on Mac."</i> He also said plainly that CodeWeavers had not paid him to say it. It is an argument made in
+good faith and worth <a href="https://docs.getwhisky.app/maintenance-notice">reading in full</a>.</p>
+
+<h2>Why it stopped keeping up</h2>
+<p>Whisky bundled its own engine built from CrossOver 22.1.1 sources. That is Wine 7.7, from 2022, and the
+version was hardcoded in the app. The notice was explicit: no upgrade to Wine 8 or later, ever. The Steam
+breakage that followed was declared won't-fix, because there was no way to fix it inside a frozen engine.</p>
+<p>The rest was solid work: D3DMetal by default, a per-bottle DXVK toggle, deep bottle settings with escape
+hatches to regedit and winecfg, a QuickLook extension giving Windows executables real Finder icons.
+Highball has not matched all of that polish. What Whisky never had was launcher automation, and its game
+knowledge lived in 254 wiki pages and a Discord rather than the app.</p>
+
+<h2>Where things stand now</h2>
+<div class="tablewrap">
+<table>
+  <tr><th></th><th>Whisky (final)</th><th>frankea/Whisky fork</th><th>Highball</th></tr>
+  <tr><td>Status</td><td>Archived, April 2025</td><td>Active, regular releases</td><td>Active</td></tr>
+  <tr><td>Engine</td><td>Wine 7.7, frozen</td><td>Wine 11.0, 11.15 beta</td><td>Wine 10 line</td></tr>
+  <tr><td>Renderers</td><td>D3DMetal, DXVK</td><td>D3DMetal, DXVK 1.10.3, DXMT 0.80</td><td>DXVK, DXMT, D3DMetal, per bottle</td></tr>
+  <tr><td>Launchers</td><td>Install them yourself</td><td>Reads an installed Steam library</td><td>One-click Steam, Epic via Legendary, Battle.net recipe</td></tr>
+  <tr><td>Compat data</td><td>254 wiki pages</td><td>83 bundled entries</td><td>101 curated games, 12,491 predictions</td></tr>
+  <tr><td>macOS</td><td>14+</td><td>15+</td><td>14+</td></tr>
+  <tr><td>Licence</td><td>Free, GPL-3</td><td>Free, GPL-3</td><td>Free, GPL-3</td></tr>
+</table>
+</div>
+<p>Highball is notarized and auto-updating, with no account and no telemetry. Its database is open: 101
+curated games, 5 of them verified by hand on real hardware, 39 blocked by kernel anti-cheat, and 12,491
+predictions derived from ProtonDB. CC0 for the curated data, ODbL for predictions, MIT for anti-cheat.
+<a href="/docs/data/">How it is built.</a></p>
+<p class="note">One thing the database cannot do yet: tell you which renderer to pick. Highball switches
+DXVK, DXMT and D3DMetal per bottle, but the number of games carrying two dated renderer verdicts is
+currently zero. It is a knob you turn, not a recommendation.</p>
+
+<h2>Moving your games across</h2>
+<p class="note bad">Whisky bottles do not import into Highball, and no converter is planned. A Whisky bottle
+was built by a 2022 Wine and carries that engine's registry state and installed runtimes; pointing a Wine 10
+engine at it inherits failures nobody can debug. Reinstall into a fresh bottle instead.</p>
+<p>That means bandwidth, not surgery:</p>
+<ul>
+  <li>Keep Whisky installed until you are done; installing Highball does not touch it.</li>
+  <li>Get your saves out first. Whisky's bottle view has an <b>Open C: Drive</b> button; saves usually sit
+      under <code>users/</code>, in Documents or AppData.</li>
+  <li>Check your games in <a href="/database/">the database</a> before you redownload 80&nbsp;GB. If a title
+      is blocked by kernel anti-cheat, no wrapper on any Mac will run it.
+      <a href="/docs/anti-cheat/">Why that limit exists.</a></li>
+  <li><a href="/docs/install/">Install Highball</a>, make a bottle, and install Steam with one click. Epic
+      connects in-app through the open-source Legendary client. Battle.net has a recipe.</li>
+  <li>Reinstall, restore saves, then delete the old bottles. They are often tens of gigabytes.</li>
+</ul>
+<p>If a game misbehaves after the move, <a href="/docs/troubleshooting/">start here</a>.</p>
+
+<h2>The funding argument, since it will come up</h2>
+<p>Highball is not a repackaged CrossOver: its engines are assembled from pinned community Wine builds in the
+Gcenx and Sikarugir lineage. That does not make the point wrong. Someone has to pay for Wine on macOS, and
+today CodeWeavers largely does. <a href="/docs/credits/">Who builds what Highball depends on.</a></p>
+
+<h2>The community fork is a real option</h2>
+<p>Adam Franke's <a href="https://github.com/frankea/Whisky">frankea/Whisky</a> picked the project up in
+January 2026 and has kept it moving: around 465 stars, releases every couple of weeks, signed and notarized,
+GPL-3, no affiliate deals. If you liked Whisky you will lose nothing switching to it, and in several places
+it is ahead of Highball:</p>
+<ul>
+  <li><b>Newer engine.</b> Wine 11.0 stable with a Wine 11.15 beta track, against Highball's Wine 10 line.</li>
+  <li><b>Deeper diagnostics.</b> A crash classifier, remediation cards that apply a fix and report whether it
+      worked, troubleshooting wizards. Highball has no equivalent, and it is the best answer anyone has built
+      for the "my game just died" moment.</li>
+  <li><b>More languages.</b> 22 localizations via Crowdin.</li>
+  <li><b>D3DMetal depth.</b> MetalFX and DLSS bridging, Metal 4 encoding, fixes targeted at specific titles.</li>
+</ul>
+<p>What differs: it needs macOS 15, D3DMetal means importing Apple's Game Porting Toolkit image yourself, its
+compatibility data is 83 hand-written entries, and there is no launcher automation beyond reading a Steam
+library you already installed. It keeps Whisky's bottle-first layout, though a library-first UI is merged and
+due in the next release.</p>
+
+<h2>Which should you use</h2>
+<p>Use the <b>frankea fork</b> if you want the app you already know with a newer engine underneath, if you are
+chasing D3DMetal or MetalFX performance on one specific title, or if you value that diagnostics stack. It is
+good work by someone doing it for the right reasons.</p>
+<p>Use <b>CrossOver</b> if you would rather pay someone and have support to email. That is Whisky's own
+recommendation and it is not wrong. <a href="/vs/crossover/">Longer comparison here.</a></p>
+<p>Use <b>Highball</b> if you want your games rather than your bottles on the first screen, one-click Steam
+and Epic instead of chasing installers, and a verdict before you spend an evening downloading. Do not use it
+on an Intel Mac or macOS 13, if your game is one of the 39 blocked by kernel anti-cheat, or if it has a
+native Mac build, which beats translation every time. Highball is also new: the fork has roughly twenty times
+its installed base and months more of bug reports behind it.</p>
+<p><a class="btn" href="https://github.com/gauthierpiarrette/highball/releases/latest/download/Highball.dmg">Download Highball.dmg</a></p>
+<p class="sub">Apple Silicon, macOS 14 or newer. Free, no account, no telemetry.</p>

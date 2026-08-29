@@ -1,0 +1,96 @@
+<!-- Highball vs GameSir GameHub for Mac: an Honest Comparison | GameHub has the smoother Steam setup and far more reach. Highball is open source, requires no account, and publishes all of its compatibility data. -->
+<h1>Highball vs GameSir GameHub</h1>
+<p>GameHub for Mac is the biggest new entrant in this category. GameSir, the controller company, announced it
+in February 2026 and has run a free public beta since April. It is real software with real engineering behind
+it, and far more people have heard of it than have heard of Highball.</p>
+<p>The two tools overlap almost completely on who they are for: someone with an Apple Silicon Mac, a Steam
+library, and no interest in learning what a bottle is. Where they differ is mostly not performance.</p>
+
+<h2>What GameHub does better</h2>
+<p>The first run. GameHub links your Steam account and downloads game depots itself, so no Windows Steam client
+ever appears on screen. Highball's Steam support is one click, but what that click does is install the Windows
+Steam client into a bottle and let it update itself, which is slower the first time and puts a Windows window
+in front of you. For a person who has never used Wine, GameHub's flow is better, and it is not close.</p>
+<p>The rest of the list is real too:</p>
+<ul>
+  <li>It is not a reskin. Their public GitHub org carries their own Wine patches, an actively developed fork of
+      DXMT, and a JIT build of the rosettax87 x87 floating-point hack.</li>
+  <li>FSR upscaling and per-game profiles (Wine version, sync mode, video decode) built into the UI.</li>
+  <li>A storefront library with editor's picks, review scores and genre tags. That is a discovery layer
+      Highball does not have.</li>
+  <li>A funded team rather than one person, at a hardware company that has been shipping since 2013.</li>
+  <li>Controller support from the company that makes the controllers.</li>
+</ul>
+<p>Performance between the two is broadly a wash, because underneath the branding both are Wine plus some
+combination of DXVK, DXMT and Apple's D3DMetal. Nobody is doing magic here.</p>
+
+<h2>The structural differences</h2>
+<div class="tablewrap">
+<table>
+  <tr><th></th><th>Highball</th><th>GameSir GameHub</th></tr>
+  <tr><td>Price</td><td>Free, GPL-3</td><td>Free public beta. No pricing announced for a stable release</td></tr>
+  <tr><td>Source</td><td>Open, auditable</td><td>Closed. Their forks of upstream projects are public, the client is not</td></tr>
+  <tr><td>Account</td><td>None</td><td>Required, plus a Steam login</td></tr>
+  <tr><td>How you get it</td><td>Notarized DMG, direct download</td><td>Through their Discord (around 30,000 members)</td></tr>
+  <tr><td>Telemetry</td><td>None</td><td>Not documented publicly</td></tr>
+  <tr><td>Steam</td><td>One click, runs the Windows Steam client in a bottle</td><td>Account login, downloads depots directly</td></tr>
+  <tr><td>Epic</td><td>Via the open-source Legendary client</td><td>Account linked in the app</td></tr>
+  <tr><td>Compatibility data</td><td>Public database, openly licensed</td><td>In the app only. No public database</td></tr>
+  <tr><td>Renderers</td><td>DXVK, DXMT or D3DMetal, switchable per bottle</td><td>Chosen for you by a per-game profile</td></tr>
+  <tr><td>Release notes</td><td>Public releases, auto-updating</td><td>No public changelog or release feed</td></tr>
+  <tr><td>Requirements</td><td>Apple Silicon, macOS 14+</td><td>Apple Silicon, macOS 14+, 16&nbsp;GB RAM advised</td></tr>
+</table>
+</div>
+
+<h2>The trust argument, without the theatrics</h2>
+<p>Community reaction to GameHub is split down the middle. Showcase posts on r/macgaming score in the hundreds
+of points because the thing works, and the comment sections under those same posts fill up with objections
+about closed source, where account data ends up, and whether redistributing Apple's D3DMetal is licensed at
+all. Both halves are honest reactions. People who raise the concerns and people who use it daily are often the
+same people.</p>
+<p>Highball is not going to tell you GameHub is malware, because there is no evidence of that and the
+accusation is cheap. The difference worth stating is structural. Highball is GPL-3, so you can read what it
+does. There is no account, so there is nothing about you to store or to leak. There is no telemetry. The
+download is a notarized DMG you fetch directly instead of a file behind a chat server. And the compatibility
+claims are published as data rather than made inside a closed app.</p>
+<p class="sub">That last one is the part nobody else is doing: 101 curated games, 39 marked blocked by kernel
+anti-cheat, 12,491 ProtonDB-derived predictions, CC0 for the curated set and ODbL for the predictions.
+<a href="/docs/data/">How the data works.</a></p>
+
+<h2>Where Highball is genuinely behind</h2>
+<p>It is a few weeks old and it shows. Of those 101 curated entries, exactly 5 have been verified by hand on
+real Apple Silicon hardware. The rest is inherited or predicted, and predictions come from Linux results, which
+is a different graphics stack.</p>
+<p>The renderer matrix is a structure with mostly empty rows. Highball can switch a bottle between DXVK, DXMT
+and D3DMetal, and which one works varies a lot per game, but the database currently holds zero games with two
+dated renderer verdicts to compare. That is the gap, stated plainly, and filling it is the point of the whole
+project.</p>
+<p>Highball also has no depot pipeline, no discovery shelves, and no upscaler of its own. On raw feature count
+GameHub is ahead today.</p>
+
+<h2>What neither one fixes</h2>
+<p>Kernel anti-cheat. Vanguard, Ricochet and the kernel modes of EAC and BattlEye load a Windows kernel driver,
+and there is no Windows kernel under either app. That is architecture, not a missing feature. Userspace cases
+vary per title, which is why the database records a verdict per game rather than per anti-cheat vendor:
+Helldivers&nbsp;2 and Elden Ring, for instance, are playable under CrossOver despite carrying anti-cheat.
+<a href="/docs/anti-cheat/">The full explanation is here.</a></p>
+<p>Neither tool covers GOG or Ubisoft Connect properly. Both are Apple Silicon only.</p>
+
+<h2>Which should you use</h2>
+<p>Pick GameHub if you want the shortest path from a Mac to a running Steam game, you do not mind making an
+account and joining a Discord to get the installer, and closed source is not a dealbreaker for you. It is the
+better first-run experience today and pretending otherwise would be dishonest.</p>
+<p>Pick Highball if you want to see what the software does, keep your accounts out of it, or check a game's
+odds before spending 80&nbsp;GB and an evening on it. It suits people who want the renderer control rather than
+a profile chosen for them, and people who would rather read a public database than trust an in-app badge.</p>
+<p>Do not pick Highball if you have an Intel Mac, if you want a curated storefront to browse, or if you need
+today's smoothest Steam setup and you are fine with the trade that buys it. And if you would rather pay a
+company that employs Wine developers, buy CrossOver instead. <a href="/vs/crossover/">That comparison is
+here.</a></p>
+<p>
+  <a class="btn" href="https://github.com/gauthierpiarrette/highball/releases/latest/download/Highball.dmg">Download Highball</a>
+  <a class="btn" href="/database/">Check your game first</a>
+</p>
+<p class="sub"><a href="/docs/install/">Install notes</a> &middot;
+<a href="/docs/troubleshooting/">Troubleshooting</a> &middot;
+<a href="/docs/credits/">Upstream projects Highball is built on</a></p>

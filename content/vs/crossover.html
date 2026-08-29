@@ -1,0 +1,111 @@
+<!-- Highball vs CrossOver: an honest comparison for Mac gamers | CrossOver costs $54-74 a year and covers 22,655 apps. Highball is free, GPL-3 and open-data. Here is which one to buy, and when not to pick Highball. -->
+<h1>Highball vs CrossOver</h1>
+
+<p>CrossOver is the paid product this whole category is measured against, and it deserves that position.
+CodeWeavers has been shipping it for over twenty years, employs Wine's maintainer, and funds most of Wine's
+development. Highball runs on Wine. So does CrossOver. The difference is that CodeWeavers pays for the work
+and Highball does not.</p>
+
+<p>That is the honest starting point. What follows is where the two actually differ: price, openness, and what
+happens to your fixes over time.</p>
+
+<h2>The short version</h2>
+
+<div class="tablewrap">
+<table>
+  <tr><th></th><th>Highball</th><th>CrossOver</th></tr>
+  <tr><td>Price</td><td>Free</td><td>CrossOver+ lists at $74/yr and is routinely discounted: $54 on the store on 29 August 2026. CrossOver Life is $494. 14-day full trial.</td></tr>
+  <tr><td>Licence</td><td>GPL-3</td><td>Proprietary app on top of open-source Wine</td></tr>
+  <tr><td>Account</td><td>None</td><td>Licence key and activation</td></tr>
+  <tr><td>Updates</td><td>Auto-updating, notarized DMG, no gate</td><td>12 months of updates per licence. An expired licence keeps the last version you had, but stops receiving updates.</td></tr>
+  <tr><td>Compatibility data</td><td>101 curated games, open licence, reusable</td><td>22,655 applications, proprietary</td></tr>
+  <tr><td>Renderers</td><td>DXVK, DXMT, D3DMetal, switchable per bottle</td><td>DXVK, DXMT, D3DMetal, Wine D3D, switchable per bottle</td></tr>
+  <tr><td>Kernel anti-cheat</td><td><span class="pill bad">No</span></td><td><span class="pill bad">No</span></td></tr>
+  <tr><td>Support</td><td>GitHub issues</td><td>Email and phone support from staff</td></tr>
+  <tr><td>Requirements</td><td>Apple Silicon, macOS 14+</td><td>Apple Silicon and Intel today. CrossOver 27 drops Intel Macs and 32-bit bottles.</td></tr>
+</table>
+</div>
+
+<h2>What CrossOver does better</h2>
+
+<p><b>Breadth, by a factor of two hundred.</b> CodeWeavers' compatibility database covers 22,655 applications,
+4,044 of them with one-click CrossTie install profiles. Highball's curated database has 101 games. There is no
+version of this comparison where that gap is spun as a positive. If your title is obscure, or if it is not a
+game at all, CrossOver is far more likely to already know about it.</p>
+
+<p><b>Somebody is paid to chase regressions.</b> Game launchers break constantly, and CodeWeavers has staff
+whose job is to unbreak them. Their 26.3.0 release in July 2026 fixed Epic Games Launcher downloads and GOG
+Galaxy failing to load after vendor updates. 26.1.0 fixed a Battle.net install. Those turnarounds are measured
+in weeks and they happen whether or not anyone in the community feels like it that month.</p>
+
+<p><b>D3DMetal, licensed.</b> CrossOver bundles and updates Apple's D3DMetal under an arrangement with Apple.
+That arrangement is theirs. It is the one renderer a free app cannot simply ship.</p>
+
+<p><b>A post-Rosetta answer that exists.</b> Rosetta 2 is on the way out, and CodeWeavers shipped a native
+ARM64 macOS preview built on a custom FEX fork in July 2026, with CrossOver 27 targeted for early 2027. The
+preview is rough by their own account, and CrossOver 27 will drop Intel Macs and 32-bit bottles. But it is a
+real, testable answer, and Highball does not have one to show you today. If you are buying for 2027, that is a
+genuine reason to buy CrossOver.</p>
+
+<p><b>Funding Wine.</b> This is not a marketing line. CodeWeavers employs Alexandre Julliard and writes a large
+share of Wine's commits. Money spent on CrossOver reaches the people who make everything in this category
+possible, Highball included.</p>
+
+<h2>Where Highball is different</h2>
+
+<p><b>Free, and the fixes never expire.</b> Highball is GPL-3, auto-updating, and there is no licence timer. The
+sharpest version of the difference: with CrossOver, when a game update breaks something in month fourteen of a
+twelve-month licence, the fix is behind a renewal. Highball has nothing to renew. That is a structural
+difference, not a discount.</p>
+
+<p><b>No account, no telemetry.</b> Download the notarized DMG, open it, install a game. Steam is one click,
+Epic runs through the open-source Legendary client, and there is a Battle.net recipe.
+<a href="/docs/install/">Install guide.</a></p>
+
+<p><b>The data is open and reusable.</b> Curated entries are CC0, ProtonDB-derived predictions are ODbL, and
+the anti-cheat data keeps AreWeAntiCheatYet's MIT notice. Fork it, ship it in your own tool, no permission
+needed. CodeWeavers' database is a genuinely better database and it is also theirs.
+<a href="/docs/data/">How the data works.</a></p>
+
+<p><b>Verdicts carry dates and a renderer.</b> Every entry records the engine build, the macOS version and which
+of DXVK, DXMT or D3DMetal was used, because a game that black-screens under one often runs under another.</p>
+
+<div class="note">
+<p><b>Being straight about the coverage.</b> The per-renderer structure is real. The coverage is not there yet.
+Of 101 curated games, 5 are verified by hand on real hardware, and today <b>no game has two dated renderer
+verdicts</b>. The rest of the database is 39 titles blocked by kernel anti-cheat and 12,491 ProtonDB-derived
+predictions, which are odds from Linux, not answers about a Mac. Anyone telling you a young database beats a
+twenty-year-old one on coverage is selling something. <a href="/database/">Look for yourself.</a></p>
+</div>
+
+<h2>Anti-cheat: both give the same answer</h2>
+
+<p>Neither app runs kernel-level anti-cheat, and CodeWeavers has never claimed otherwise. Their own policy says
+they will not attempt it. Fortnite, Valorant, Rust and Apex do not run under either tool.</p>
+
+<p>The picture is per-title rather than per-vendor, which is the part most comparisons get wrong. Helldivers 2
+and Elden Ring both run under CrossOver despite carrying anti-cheat. Highball marks 39 database titles as
+blocked and shows that in your library before you start the download.
+<a href="/docs/anti-cheat/">The full explanation.</a></p>
+
+<h2>Which should you use</h2>
+
+<p><b>Buy CrossOver</b> if you need Windows applications rather than games, want the broadest catalogue, want
+someone to email when a game breaks, want an ARM64 story before Rosetta goes away, or simply want to fund Wine.
+All five are good reasons and the 14-day trial costs nothing to check.
+<a class="btn" href="https://www.codeweavers.com/crossover">CrossOver at CodeWeavers</a></p>
+
+<p><b>Do not pick Highball</b> if you are on an Intel Mac or macOS 13 or older: it requires Apple Silicon and
+macOS 14+. Do not pick it if you need a non-game Windows app, if you need a named human accountable for a fix
+landing on a schedule, or if your game is not in the database and you have no appetite for trying three
+renderers yourself.</p>
+
+<p><b>Use Highball</b> if you play a handful of games on Steam, Epic or Battle.net, you would rather switch
+renderers by hand than trust an Auto setting, you want compatibility data you can take and reuse, or you do not
+want your fixes attached to a renewal date.</p>
+
+<p class="sub">Also worth reading: <a href="/vs/gamehub/">Highball vs GameHub</a> and
+<a href="/vs/whisky/">Highball vs Whisky</a>. And running both Highball and a CrossOver licence is a completely
+sane setup. They do not conflict.</p>
+
+<p><a class="btn" href="https://github.com/gauthierpiarrette/highball/releases/latest/download/Highball.dmg">Download Highball</a></p>

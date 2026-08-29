@@ -1,0 +1,92 @@
+<!-- Highball vs Pixel Port: Open Source vs Closed Beta 2026 | Pixel Port is simpler and Steam-only, free only during its beta. Highball is open source, permanently free, no account, three renderers, more stores. -->
+<h1>Highball vs Pixel Port</h1>
+<p>Pixel Port is the closest thing to a mirror of this project. One developer, Apple Silicon only, one-click
+Steam games, compatibility tiers that admit when a game does not work. It launched on 28&nbsp;June&nbsp;2026,
+about two months before Highball, so it is a convergent answer to the same problem rather than a copy. Both
+projects were built because Whisky stopped.</p>
+<p>The differences that matter are structural, not cosmetic, and a few of them go their way.</p>
+
+<h2>The differences at a glance</h2>
+<div class="tablewrap">
+<table>
+  <tr><th></th><th>Highball</th><th>Pixel Port</th></tr>
+  <tr><td>Price</td><td>Free, permanently</td><td>Free during the beta</td></tr>
+  <tr><td>Source</td><td>Open, GPL-3</td><td>Closed; only the installer and website repos are public</td></tr>
+  <tr><td>Account</td><td>None</td><td>Apple or Google sign-in, plus a Steam link, before you play</td></tr>
+  <tr><td>Stores</td><td>Steam, Epic (Legendary), Battle.net, plus arbitrary Windows programs</td><td>Steam only</td></tr>
+  <tr><td>Renderers</td><td>DXVK, DXMT and D3DMetal, switchable per bottle</td><td>DXMT as the main path, no D3DMetal</td></tr>
+  <tr><td>Recipes and fixes</td><td>Published as data you can read and reuse</td><td>Delivered from their server, never published</td></tr>
+</table>
+</div>
+
+<h2>What Pixel Port does better</h2>
+<p>The first run is simpler. There are no bottles, no renderer picker, no decisions to get wrong. MacHow2's
+review scored it 75/100 and described setup as easier than CrossOver, Whisky, UTM or Parallels, with gameplay
+"no different to using Crossover". It is the only independent review either of us has.</p>
+<p>They have verified more games by hand. Their stats page lists 58 titles confirmed on a real Mac. Highball
+has 5. That gap is real and not in our favour: a hand-checked verdict beats any estimate, and they have more
+of them.</p>
+<p>They also ship two things Highball does not have: an in-app compatibility report for your specific Mac, and
+a command palette. And because their per-game fixes come from their server, they can repair a broken game for
+everyone without an app update. Highball fixes arrive as releases.</p>
+<p>They are also much easier to find. Their search presence in this niche is the best of anyone's; if you got
+here by searching, you probably saw their page first.</p>
+
+<h2>What Highball does differently</h2>
+<p><b>Free, and structurally unable to stop being free.</b> Pixel Port has published no prices. MacHow2's
+review says not to expect it to stay free forever, which is the reviewer's read rather than a Pixel Port
+statement. Highball is GPL-3: there is no mechanism by which the version you have today becomes paid, and if
+this project ends the code stays forkable.</p>
+<p><b>No account.</b> Their DMG downloads without a gate, but you sign in with Apple or Google and connect
+Steam before you play anything. Highball asks for nothing and sends nothing. To be precise: their
+docs describe a Distributed Validation Network where "every install and launch produces a signal", while their
+homepage says analytics are off by default and compatibility telemetry is opt-in. Those two statements do not
+obviously agree.</p>
+<p><b>More than Steam.</b> Steam is one click in both. Highball also does Epic through the open-source
+Legendary client, has a Battle.net recipe, and will run an ordinary Windows program that is not a game at all.
+Pixel Port is Steam-only, with no Epic, GOG or Battle.net support and no way to point it at your own .exe.</p>
+<p><b>Three renderers instead of one.</b> Pixel Port's runtime pairs a modern Wine build with DXMT, and their
+release notes add a DXVK route for older DirectX&nbsp;8 and 9 titles. There is no D3DMetal path, so games that
+only behave under Apple's translation layer are out of reach by design. Highball lets you switch DXVK, DXMT
+and D3DMetal per bottle when a game misbehaves.</p>
+<p>The honest counterweight: the Highball database currently has zero games with two dated renderer verdicts.
+We ship the switch; the evidence for which renderer wins per title is still being collected.
+<a href="/docs/data/">How the data works.</a></p>
+<p><b>Recipes as data.</b> Highball's curated entries and recipes are CC0, the ProtonDB-derived predictions are
+ODbL, the anti-cheat data keeps AreWeAntiCheatYet's MIT notice, and all of it is plain JSON on GitHub. Pixel
+Port's equivalent lives behind their API. If they stop, it goes with them. If Highball stops, the data is
+still there and somebody else can use it.</p>
+
+<h2>The catalogue numbers, both of them</h2>
+<p>Pixel Port advertises 11,046 catalogue entries. Their own stats page puts 58 of those in the verified tier.
+MacHow2 counted 172 games actually playable when they reviewed it in August. All three are real and measure
+different things: the big one is mostly automated estimates, the small ones are what somebody ran.
+Their site does disclose the tiers, so this is a marketing-surface problem rather than dishonesty.</p>
+<p>Highball has the same shape at a smaller scale: 101 curated games, 5 verified by hand on real hardware, 39
+marked blocked by kernel anti-cheat, and 12,491 ProtonDB-derived predictions that are deliberately kept out of
+search until a human confirms them. Judge either project by its verified column.
+<a href="/database/">Ours is here.</a></p>
+
+<h2>Anti-cheat, where neither of us wins</h2>
+<p>Kernel anti-cheat loads a Windows kernel driver, and there is no Windows kernel under Wine on macOS. That
+is architecture, not a missing feature, and it hits both projects identically. Userspace anti-cheat
+varies per title: Helldivers&nbsp;2 and Elden Ring both run under CrossOver despite carrying it, so the answer
+has to be per game rather than per vendor. Both projects mark blocked titles before you download 80&nbsp;GB,
+which is correct and not a difference.
+<a href="/docs/anti-cheat/">The full explanation.</a></p>
+
+<h2>Which should you use</h2>
+<p>Use Pixel Port if your library is entirely on Steam, you want the shortest possible path from download to
+playing, an Apple or Google sign-in does not bother you, and you are comfortable with a closed beta whose
+pricing has not been announced. Their simplicity lead is real.</p>
+<p>Use Highball if you buy games on Epic or Battle.net, you want to run Windows software that is not a Steam
+game, you want the renderer switch when something black-screens, you would rather not have an account, or you
+want a tool that cannot be paywalled or switched off later.</p>
+<p>Do not pick Highball if you want the larger hand-verified list today, because that is theirs, or if you want
+per-Mac verdicts inside the app, or server-side fixes that arrive without an update. And if your game is
+kernel anti-cheat, neither of these is the answer, and no future version will be.</p>
+<p>Both are free notarized downloads, so trying both costs an evening. Highball builds on Wine, DXMT, DXVK,
+D3DMetal and Legendary, and so, in large part, does Pixel Port.
+<a href="/docs/credits/">Credit where it is due.</a></p>
+<p><a class="btn" href="https://github.com/gauthierpiarrette/highball/releases/latest/download/Highball.dmg">Download Highball</a>
+<span class="sub">Apple Silicon, macOS 14 or newer. <a href="/docs/install/">Install notes.</a></span></p>

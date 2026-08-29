@@ -1,0 +1,41 @@
+<!-- Credits — what Highball is built on | Highball stands on Wine, Gcenx's macOS engine builds, DXVK, DXMT, MoltenVK and Apple's Game Porting Toolkit. Support them. -->
+<h1>Credits</h1>
+<p>Highball is a front end. Nearly all of the hard engineering that makes a Windows game run on a Mac was done
+by other people, most of them unpaid or underpaid. If you have money to spend on this ecosystem, spend it on
+them before you think about me.</p>
+
+<h2>What Highball is built on</h2>
+<ul>
+  <li><b><a href="https://www.winehq.org">Wine</a></b> — the compatibility layer everything here depends on.
+      Most of its development is funded by <a href="https://www.codeweavers.com">CodeWeavers</a>, who sell
+      CrossOver. If you want commercial support, or you simply want to fund Wine directly,
+      <a href="https://www.codeweavers.com/crossover">buying CrossOver</a> is the most direct way to do it.</li>
+  <li><b><a href="https://github.com/Gcenx">Gcenx</a></b> — packages the macOS Wine builds that Highball
+      downloads, and maintains the Sikarugir engine line along with the Homebrew casks much of the Mac Wine
+      world installs from. He takes <a href="https://ko-fi.com/gcenx">Ko-fi</a>.</li>
+  <li><b><a href="https://github.com/doitsujin/dxvk">DXVK</a></b> — Direct3D 9/10/11 over Vulkan, by
+      Philip Rebohle and contributors.</li>
+  <li><b><a href="https://github.com/3Shain/dxmt">DXMT</a></b> — Direct3D 11 over Metal, by Feifan He,
+      developed for CodeWeavers and released under the LGPL. It is Highball's default renderer.</li>
+  <li><b><a href="https://github.com/KhronosGroup/MoltenVK">MoltenVK</a></b> — Vulkan over Metal, which is
+      what lets DXVK exist on a Mac at all.</li>
+  <li><b><a href="https://developer.apple.com/games/game-porting-toolkit/">Apple's Game Porting Toolkit</a></b>
+      — D3DMetal, available as a per-bottle renderer after you accept Apple's licence.</li>
+  <li><b><a href="https://github.com/legendary-gl/legendary">Legendary</a></b> — the open-source Epic Games
+      client that powers Highball's Epic library.</li>
+  <li><b><a href="https://www.protondb.com">ProtonDB</a></b> and
+      <b><a href="https://areweanticheatyet.com">AreWeAntiCheatYet</a></b> — the open datasets behind the
+      predictions and the anti-cheat verdicts in the database.</li>
+</ul>
+
+<h2>Working with upstream</h2>
+<p>Highball does not fork Wine and does not host engine binaries. It downloads pinned upstream releases and
+verifies them, which keeps the engine line where it belongs, with the people who maintain it.</p>
+<p>When something breaks at the engine level, the useful thing a front end can do is diagnose it properly and
+send it upstream with a reproduction rather than working around it quietly. Recent examples: the Epic Games
+Launcher's DP-07 permission failure traced to the Windows security-descriptor path, the Ubisoft Connect and
+GOG Galaxy blank-window failures traced to CEF's GPU initialisation, and the Rockstar launcher's service
+handshake deadlock traced through CrossOver's own fixes.</p>
+<p>The compatibility database is deliberately open and reusable. Curated data is CC0, the ProtonDB-derived
+predictions carry ODbL as their source requires, and the anti-cheat data keeps its MIT notice. It is meant to
+be useful to anyone building in this space, including tools that compete with Highball.</p>

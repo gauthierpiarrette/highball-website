@@ -1,0 +1,42 @@
+<!-- Troubleshooting Highball on macOS | Fixes for the "could not verify it is free of malware" Gatekeeper warning, engine download problems, and Steam first-run issues. -->
+<h1>Troubleshooting</h1>
+
+<h2>"Highball can't be opened because Apple cannot check it for malicious software"</h2>
+<p>Every Highball release since 0.1.0 is signed with an Apple Developer ID and notarized by Apple. If you see
+this warning, the copy on your disk is not the copy that was published.</p>
+<p>The usual cause is a third-party unarchiver. Sparkle, the update framework Highball uses, contains symbolic
+links inside its framework bundle. Some unzip tools write those links out as ordinary files instead, which
+breaks Apple's code signature, and macOS correctly refuses to open a bundle whose seal no longer matches.
+The file was fine when it left the server. The extraction broke it.</p>
+<p><b>The fix:</b> download <code>Highball.dmg</code> rather than the zip, and open it by double-clicking.
+The DMG is notarized and stapled, it needs no extraction tool, and it is the download every link on this site
+points to.</p>
+<p>If you already have a broken copy, delete it, empty the Trash, and download the DMG again. Safari,
+Finder's Archive Utility, and <code>ditto</code> all handle the zip correctly if you prefer it; <code>unzip</code>
+and several popular third-party unarchivers do not.</p>
+
+<h2>The engine download stalls or never finishes</h2>
+<p>Highball reports live progress while it downloads an engine. If the progress stops moving for a minute,
+the transfer has stalled rather than hung: cancel it and start again, and it will resume. Partially downloaded
+engines are cleaned up automatically on the next attempt, so a failed install never leaves anything broken behind.</p>
+
+<h2>Steam takes a very long time on first run</h2>
+<p>Steam updates itself the first time it launches inside a fresh bottle, and that first update is genuinely
+slow, often around twenty minutes. Highball shows this as a stage banner so you know the wait is expected.
+Leave it alone until it finishes. Later launches are normal speed.</p>
+
+<h2>A game launches to a black screen</h2>
+<p>Usually the renderer. Highball can run each game through DXVK, DXMT or Apple's D3DMetal, and titles
+differ in which one they tolerate. Check the game's page in the <a href="/database/">database</a> for the
+renderer that has actually been confirmed, then set it in the bottle's settings. If you find one that works
+where the database says nothing yet,
+<a href="https://github.com/gauthierpiarrette/highball-db/issues/new?template=report.yml">send a report</a>.</p>
+
+<h2>The game refuses to start because of anti-cheat</h2>
+<p>If it uses kernel-level anti-cheat, it cannot be made to work.
+<a href="/docs/anti-cheat/">Here is why, and what your options are.</a></p>
+
+<h2>Something else</h2>
+<p>Open an issue on <a href="https://github.com/gauthierpiarrette/highball/issues">GitHub</a> or ask in
+<a href="https://github.com/gauthierpiarrette/highball/discussions">Discussions</a>. The app can prefill a
+bug report for you from the Help menu, including the log, which makes it much faster to diagnose.</p>

@@ -1,0 +1,106 @@
+<!-- Games that already run natively on Mac, no Highball needed | Minecraft, Cyberpunk 2077, Baldur's Gate 3 and World of Warcraft have Mac builds. A checked list of what is native, what needs Rosetta, and what is not. -->
+<h1>Games that already run natively on Mac</h1>
+<p>About one in five of the "can I play X on my Mac" questions in a year of r/macgaming posts are
+about a game that already ships a Mac build. The answer in those threads is not Highball. It is:
+open the store page, buy the Mac version, play it tonight.</p>
+
+<p>A native build beats translation every time. Nothing sits between the game and Metal, so you get the frame
+rate the developer shipped, working controllers, and updates that do not break on the next macOS release.
+Highball exists for the games that never got one. Checking first costs thirty seconds and saves an evening.</p>
+
+<p class="sub">Checked against Steam store pages, Mac App Store listings and publisher pages on 2026-08-29.
+Compatibility rots. If a row here is wrong, say so and it gets fixed.</p>
+
+<h2>Native, current, Apple Silicon</h2>
+<p>Each of these names an Apple chip in its own published Mac requirements.</p>
+<div class="tablewrap">
+<table>
+<tr><th>Game</th><th>Where</th><th>What the store says</th></tr>
+<tr><td>Cyberpunk 2077: Ultimate Edition</td><td>Steam, Mac App Store, GOG, Epic</td><td>macOS 15.5, M1, 16&nbsp;GB RAM. Mac version shipped 17 July 2025.</td></tr>
+<tr><td>Baldur's Gate 3</td><td>Steam</td><td>macOS 14.7.1, Apple M1.</td></tr>
+<tr><td>Stray</td><td>Steam</td><td>"Requires an Apple processor", macOS 13.</td></tr>
+<tr><td>Civilization VII</td><td>Steam</td><td>"Requires an Apple processor", M1, macOS Sequoia.</td></tr>
+<tr><td>Total War: WARHAMMER III</td><td>Steam, Feral</td><td>Apple M1 or better, macOS 13.4.</td></tr>
+<tr><td>Hades II</td><td>Steam</td><td>"Requires an Apple processor", M1, macOS 12.</td></tr>
+<tr><td>Age of Empires II: Definitive Edition</td><td>Steam</td><td>"Requires an Apple processor", M1, macOS 15.7.</td></tr>
+<tr><td>Football Manager 26</td><td>Steam</td><td>Apple M1 listed. Unity rebuild, released 4 November 2025.</td></tr>
+<tr><td>No Man's Sky</td><td>Steam</td><td>Native Apple Silicon port, on Mac since 2023.</td></tr>
+<tr><td>World of Warcraft</td><td>Battle.net</td><td>Apple Silicon native since patch 9.0.2, November 2020.</td></tr>
+<tr><td>Minecraft: Java Edition</td><td>minecraft.net</td><td>Apple Silicon native since 1.19. Bedrock has no Mac build.</td></tr>
+<tr><td>League of Legends, Teamfight Tactics</td><td>Riot</td><td>Official macOS client. Riot's embedded Vanguard came to macOS in 2025.</td></tr>
+<tr><td>Hollow Knight, Hollow Knight: Silksong</td><td>Steam</td><td>Silksong had a Mac build on day one, 4 September 2025.</td></tr>
+<tr><td>Slay the Spire 2</td><td>Steam</td><td>Mac at early access launch, 5 March 2026.</td></tr>
+<tr><td>Factorio</td><td>Steam</td><td>Recommended spec is literally "2020 Apple Silicon".</td></tr>
+</table>
+</div>
+<p>Feral Interactive keeps most of the Total War back catalogue on macOS, plus Alien: Isolation and Shadow of
+the Tomb Raider. We only checked WARHAMMER III's chip requirement, so treat the rest as "Mac build exists,
+architecture unconfirmed".</p>
+
+<h2>Native, but not on the store you bought it from</h2>
+<p>These have real Apple Silicon builds. Your Steam copy will not launch one, because the Mac build only exists
+on the Mac App Store and it is a separate purchase.</p>
+<div class="tablewrap">
+<table>
+<tr><th>Game</th><th>Mac build</th><th>Steam</th></tr>
+<tr><td>Resident Evil Village</td><td>Mac App Store, macOS 12, M1 or later</td><td>Windows only</td></tr>
+<tr><td>Resident Evil 4 (2023)</td><td>Mac App Store, macOS 13, M1 or later</td><td>Windows only</td></tr>
+<tr><td>Death Stranding Director's Cut</td><td>Mac App Store, macOS 13.3, M1 or later</td><td>Windows only</td></tr>
+</table>
+</div>
+<p class="note">Buying a game twice is annoying. It still beats running the Windows build through a
+translation layer, and it is why the platform icons on the page you are buying from matter more than a
+general answer.</p>
+
+<h2>Native, but an Intel build under Rosetta</h2>
+<p>A Mac build that predates Apple Silicon still runs, translated by Rosetta&nbsp;2, and that is a shorter path
+than Wine plus a Direct3D layer. It is on a clock: Apple has said macOS 27 is the last release with full
+Rosetta&nbsp;2, after which a reduced subset stays behind for older unmaintained games.</p>
+<ul>
+  <li><b>Dota 2</b> <span class="pill info">supported</span> Valve still ships and supports the Mac client. It is an x86_64 binary.</li>
+  <li><b>StarCraft II</b> Battle.net Mac client, Intel build.</li>
+  <li><b>Civilization VI</b> The Mac App Store version went universal in September 2024. The Steam build still lists Intel requirements, and we did not confirm its architecture.</li>
+  <li><b>Stardew Valley, Slay the Spire (the first one), Terraria, Divinity: Original Sin 2 Definitive Edition, Hades (the first one)</b> Mac builds from the Intel era.</li>
+  <li><b>Disco Elysium</b> Reported Apple Silicon native on the Mac App Store build and Intel on Steam. Community-reported, unverified by us.</li>
+</ul>
+
+<h2>Not native, whatever you have read</h2>
+<div class="tablewrap">
+<table>
+<tr><th>Game</th><th>Status</th></tr>
+<tr><td>Fortnite</td><td>No Mac client since 2020, frozen by the Apple and Epic dispute. Cloud streaming only.</td></tr>
+<tr><td>Valorant</td><td>No Mac client, and kernel Vanguard rules out every compatibility layer. <a href="/docs/anti-cheat/">Why.</a></td></tr>
+<tr><td>Counter-Strike 2</td><td>Valve dropped macOS. Support for the legacy CS:GO Mac build ended 1 January 2024.</td></tr>
+<tr><td>Team Fortress 2, Portal, Portal 2, Half-Life 2, Left 4 Dead 2, CS: Source, Day of Defeat: Source</td><td>Valve removed the Mac builds in a June 2024 patch.</td></tr>
+<tr><td>Among Us</td><td>No Mac desktop build. The iPad version is on the Mac App Store and needs an M1 or later.</td></tr>
+<tr><td>Diablo IV, Overwatch 2</td><td>No Blizzard Mac client.</td></tr>
+<tr><td>Red Dead Redemption 2, Black Myth: Wukong</td><td>Windows only.</td></tr>
+</table>
+</div>
+<p>The Valve row is where a compatibility layer genuinely helps: those Windows builds still run. Portal 2 is one
+of the five titles in <a href="/database/">our database</a> verified by hand on Apple Silicon, at 200+ fps under
+DXVK once HDR is off. Grand Theft Auto V is the other common ask, and the answer there is split rather than
+native: story mode works, Online is blocked.</p>
+
+<h2>How to check a game yourself</h2>
+<ul>
+  <li>On a Steam store page, a macOS icon means a Mac build exists. Open System Requirements, Mac tab: "Requires an Apple processor" or an M-series chip means Apple Silicon native, an Intel Core listing means Rosetta.</li>
+  <li>On the Mac App Store, the Compatibility section spells it out: "Mac with Apple M1 chip or later".</li>
+  <li>The publisher's own page is the tiebreaker when Steam and the App Store disagree.</li>
+</ul>
+
+<h2>Corrections</h2>
+<p>This list is community-correctable and we would rather be told than be wrong.
+<a href="https://github.com/gauthierpiarrette/highball-db/issues/new?template=report.yml">Open a report</a>
+with the game and where you saw it. <a href="/docs/data/">How the data works.</a></p>
+
+<h2>Which should you use</h2>
+<p>If your game appears in the first two tables, install the native build and skip Highball for that title. There
+is no argument here: a Mac build is faster, quieter on battery, and will not break when the next macOS ships.</p>
+<p>Do not pick Highball if you are on an Intel Mac or macOS 13 or earlier, because it needs Apple Silicon and
+macOS 14 or newer. Do not pick it for a game walled off by kernel anti-cheat, because nothing in user space
+fixes that. Do not pick it when the answer is a Mac App Store purchase you were going to enjoy more anyway.</p>
+<p>Highball is for the middle case: a Windows-only game, no Mac build, no kernel anti-cheat. Free, GPL-3, no
+account, no telemetry, with a per-bottle choice of DXVK, DXMT or D3DMetal.</p>
+<p><a class="btn" href="https://github.com/gauthierpiarrette/highball/releases/latest/download/Highball.dmg">Download Highball</a>
+<a href="/docs/install/">Install guide</a></p>
