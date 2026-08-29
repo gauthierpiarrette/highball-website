@@ -100,7 +100,11 @@ def layout(*, title, desc, path, body, base, noindex=False, og_image=None, jsonl
 <meta name="description" content="{html.escape(desc)}">
 {'<meta name="robots" content="noindex,follow">' if noindex else ''}
 <link rel="canonical" href="{url}">
-<link rel="icon" href="/static/logo-128.png">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16.png">
+<link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+<meta name="theme-color" content="#16110A">
 <meta property="og:type" content="website">
 <meta property="og:title" content="{html.escape(title)}">
 <meta property="og:description" content="{html.escape(desc)}">
@@ -638,6 +642,8 @@ def main():
     shutil.rmtree(a.out, ignore_errors=True)
     os.makedirs(a.out, exist_ok=True)
     shutil.copytree("static", os.path.join(a.out, "static"))
+    # browsers request /favicon.ico by default; serve it from the root too
+    shutil.copyfile("static/favicon.ico", os.path.join(a.out, "favicon.ico"))
 
     indexable = ["/", "/database/"]
 
