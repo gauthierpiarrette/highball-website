@@ -259,6 +259,13 @@ def faq_entries(title, game, blocked, label, stamp, has_recipe):
         else:
             evidence = ("This comes from community reports rather than a Highball test run, so treat it as a "
                         "reasonable expectation rather than a guarantee.")
+        rl = game.get("requiresLauncher") or {}
+        if rl.get("impact") == "blocks":
+            out.append(qa(f"Does {title} work on Mac?",
+                          f"Not through Highball at the moment. {title} requires "
+                          f"{rl.get('name', 'a launcher')} to start, and that launcher does not work on this Wine "
+                          f"build. Reports about the game itself may be positive, but there is no route to it today."))
+            return out
         out.append(qa(f"Does {title} work on Mac?", f"{title} has no native Mac build, but it is reported to run "
                                                     f"on Apple Silicon through Highball, a free open-source "
                                                     f"compatibility layer. {evidence}"
@@ -313,6 +320,11 @@ def game_page(game, data, base):
         verdict = (f"<b>{html.escape(title)} cannot run on a Mac through Highball, CrossOver, Whisky, "
                    f"or any other compatibility layer.</b> Its anti-cheat loads a Windows kernel driver, "
                    f"and macOS will never load one. This is not a bug anyone can fix.")
+    elif (game.get("requiresLauncher") or {}).get("impact") == "blocks":
+        rl = game["requiresLauncher"]
+        verdict = (f"<b>There is no route to {html.escape(title)} through Highball right now.</b> It needs "
+                   f"{html.escape(rl.get('name', 'a launcher'))} to start, and that launcher does not work on this "
+                   f"Wine build. What the community reports about the game itself is below, for when that changes.")
     else:
         rec = game.get("renderer")
         verb = TIER_VERB.get(status, "Reported working")
@@ -339,6 +351,17 @@ def game_page(game, data, base):
 </div></div>"""
 
     body = [head, '<div class="wrap prose">']
+
+    rl = game.get("requiresLauncher") or {}
+    if rl.get("impact") == "blocks":
+        track = rl.get("tracking")
+        body.append(f"""<div class="note bad"><b>Needs {html.escape(rl.get('name', 'a launcher'))}, which does not
+        work on this engine yet.</b> {html.escape(rl.get('note', ''))} So whatever the verdict below says about the
+        game itself, there is currently no way to reach it through Highball.
+        {f'<a href="{html.escape(track)}">Tracking issue</a>.' if track else ''}</div>""")
+    elif rl.get("impact") == "workaround":
+        body.append(f"""<div class="note"><b>Needs {html.escape(rl.get('name', 'a launcher'))}.</b>
+        {html.escape(rl.get('note', ''))}</div>""")
 
     if nm.get("available"):
         where = html.escape(nm.get("where", "the publisher"))
