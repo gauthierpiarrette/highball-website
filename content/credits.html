@@ -28,14 +28,10 @@ them before you think about me.</p>
       predictions and the anti-cheat verdicts in the database.</li>
 </ul>
 
-<h2>Working with upstream</h2>
-<p>Highball does not fork Wine and does not host engine binaries. It downloads pinned upstream releases and
-verifies them, which keeps the engine line where it belongs, with the people who maintain it.</p>
-<p>When something breaks at the engine level, the useful thing a front end can do is diagnose it properly and
-send it upstream with a reproduction rather than working around it quietly. Recent examples: the Epic Games
-Launcher's DP-07 permission failure traced to the Windows security-descriptor path, the Ubisoft Connect and
-GOG Galaxy blank-window failures traced to CEF's GPU initialisation, and the Rockstar launcher's service
-handshake deadlock traced through CrossOver's own fixes.</p>
+<h2>How Highball uses this work</h2>
+<p>Highball does not fork Wine and does not host engine binaries. It downloads pinned upstream releases,
+checks them against recorded hashes, and keeps the engine line where it belongs, with the people who maintain
+it. Engine-level bugs go upstream as reproductions rather than getting quietly worked around here.</p>
 <p>The compatibility database is deliberately open and reusable. Curated data is CC0, the ProtonDB-derived
 predictions carry ODbL as their source requires, and the anti-cheat data keeps its MIT notice. It is meant to
 be useful to anyone building in this space, including tools that compete with Highball.</p>
