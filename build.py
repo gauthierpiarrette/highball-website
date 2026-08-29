@@ -308,9 +308,10 @@ def game_page(game, data, base):
     else:
         rec = game.get("renderer")
         verb = TIER_VERB.get(status, "Reported working")
+        tail = "" if status == "verified-local" else f" {html.escape(meaning)}"
         verdict = (f"<b>{verb}</b>"
                    + (f", using the <b>{RENDERER_LABEL.get(rec, rec)}</b> renderer" if rec else "")
-                   + f". {html.escape(meaning)}")
+                   + f".{tail}")
 
     art = steam_art(appid)
     head = f"""<div class="wrap">
@@ -362,6 +363,11 @@ def game_page(game, data, base):
         if last and engine:
             body.append(f'<p class="sub" style="margin-top:.7rem">{html.escape(stamp)}. Dated runs record the '
                         f'engine build and, where the reporter gave it, the macOS version.</p>')
+        elif last:
+            body.append(f'<p class="sub" style="margin-top:.7rem">Last confirmed {html.escape(last)}. That run '
+                        f'predates per-report engine and macOS logging, so those are not recorded for it. '
+                        f'<a href="https://github.com/gauthierpiarrette/highball-db/issues/new?template=report.yml">'
+                        f'A newer report</a> would carry both.</p>')
         else:
             body.append('<p class="sub" style="margin-top:.7rem">No dated Highball run yet. When one lands it '
                         'records the renderer, the engine build and the macOS version it was seen on — which is '
