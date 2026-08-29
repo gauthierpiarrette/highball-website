@@ -672,6 +672,25 @@ def main():
            "year": datetime.date.today().year}
     indexable += content_pages(a.out, a.base, ctx)
 
+    # 404: GitHub Pages serves this with a real 404 status, which keeps Google
+    # from treating missing pages as soft-404 duplicates of the homepage.
+    nf = """<div class="wrap prose" style="padding-top:3rem">
+<h1>That page isn't here</h1>
+<p>The link may be old, or the game may not be in the database under that name yet.</p>
+<ul>
+  <li><a href="/database/">Search the compatibility database</a> — 101 curated games plus predictions for
+      thousands more.</li>
+  <li><a href="/docs/install/">Install Highball</a></li>
+  <li><a href="/docs/troubleshooting/">Troubleshooting</a></li>
+  <li><a href="/">Back to the start</a></li>
+</ul>
+<p class="sub">If something on this site linked you here, that's a bug worth
+<a href="https://github.com/gauthierpiarrette/highball-website/issues">reporting</a>.</p></div>"""
+    open(os.path.join(a.out, "404.html"), "w").write(
+        layout(title="Page not found — Highball", desc="That page isn't here. Search the Mac game "
+               "compatibility database or head back to the start.", path="/404.html",
+               body=nf, base=a.base, noindex=True))
+
     # sitemap: indexable pages only (predictions are deliberately excluded)
     today = datetime.date.today().isoformat()
     urls = "".join(
