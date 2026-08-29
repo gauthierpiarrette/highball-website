@@ -179,10 +179,18 @@ def renderer_matrix(game, reports):
         rr = (r.get("renderer") or "").lower()
         if rr:
             seen.setdefault(rr, []).append(r)
+    known = {k.lower(): v for k, v in (game.get("rendererResults") or {}).items()}
     rows = []
     for r in RENDERERS:
         label = f'{RENDERER_LABEL[r]}<span class="prov">{RENDERER_GLOSS[r]}</span>'
-        if r == rec:
+        if r in known and r != rec:
+            k = known[r]
+            bad_v = k.get("verdict") == "fails"
+            rows.append(f'<tr><td class="r">{label}</td>'
+                        f'<td><span class="pill {"bad" if bad_v else "warn"}">'
+                        f'{"Does not work" if bad_v else "Partial"}</span></td>'
+                        f'<td class="sub">{html.escape(k.get("detail", ""))}</td></tr>')
+        elif r == rec:
             n = len(seen.get(r, []))
             if n:
                 detail = f"{n} report{'s' if n != 1 else ''}"
