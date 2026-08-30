@@ -7,9 +7,12 @@ on:
   #   gh api repos/gauthierpiarrette/highball-website/dispatches -f event_type=db-updated
   repository_dispatch:
     types: [db-updated]
-  # catch data changes even if nobody dispatches
+  # Catch data changes even if nobody dispatches. Hourly, not daily: highball-db pushes a
+  # db-updated dispatch when its WEBSITE_DISPATCH_TOKEN secret is set, and this is the fallback
+  # for when it is not. A day of lag meant the database could be right while the page people
+  # read was wrong, which is the one thing this site cannot afford.
   schedule:
-    - cron: "27 6 * * *"
+    - cron: "27 * * * *"
   workflow_dispatch:
 
 permissions:
