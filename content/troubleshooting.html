@@ -21,15 +21,17 @@ the transfer has stalled rather than hung: cancel it and start again, and it wil
 engines are cleaned up automatically on the next attempt, so a failed install never leaves anything broken behind.</p>
 
 <h2>Steam takes a very long time on first run</h2>
-<p>Steam updates itself the first time it launches inside a fresh bottle, and that first update is genuinely
-slow, often around twenty minutes. Highball shows this as a stage banner so you know the wait is expected.
-Leave it alone until it finishes. Later launches are normal speed.</p>
+<p>Steam updates itself the first time it launches inside a fresh environment, and that first update is genuinely
+slow, often around twenty minutes. Highball shows it on the strip at the bottom of the window, with the range it
+usually takes, so you know the wait is expected. Leave it alone until it finishes. Later launches are normal speed.</p>
 
 <h2>A game launches to a black screen</h2>
 <p>Usually the renderer. Highball can run each game through DXVK, DXMT or Apple's D3DMetal, and titles
 differ in which one they tolerate. Check the game's page in the <a href="/database/">database</a> for the
-renderer that has actually been confirmed, then set it in the bottle's settings. If you find one that works
-where the database says nothing yet,
+renderer that has actually been confirmed; Highball uses that one automatically when the game has a row, and the
+game's page says which under "When you press Play". When a game quits right away, the alert offers the
+other mode. To set a mode by hand, open Settings, then Environments, then the environment's page. If you find
+one that works where the database says nothing yet,
 <a href="https://github.com/gauthierpiarrette/highball-db/issues/new?template=report.yml">send a report</a>.</p>
 
 <h2>The game refuses to start because of anti-cheat</h2>

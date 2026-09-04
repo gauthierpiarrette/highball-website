@@ -7,7 +7,7 @@ so it opens without any warnings when you download it the normal way.</p>
 <ul>
   <li><b>Apple Silicon</b> (M1 or newer). Intel Macs are not supported.</li>
   <li><b>macOS 14 Sonoma or newer.</b></li>
-  <li>Around 8&nbsp;GB of free space for the engine and a first bottle, plus whatever your games need.</li>
+  <li>Around 8&nbsp;GB of free space for the engine and the Windows environment, plus whatever your games need.</li>
   <li>Rosetta 2, which macOS installs for you the first time it is needed.</li>
 </ul>
 
@@ -17,14 +17,17 @@ so it opens without any warnings when you download it the normal way.</p>
 The app updates itself from then on.</p>
 
 <h2>First launch</h2>
-<p>Highball walks you through downloading a Wine engine, which takes a few minutes on a normal connection.
-The engine is assembled from pinned upstream releases, each one checked against a recorded SHA-256, so you
-get exactly the build that was tested. After that you create a bottle, install Steam or connect Epic with
-one click, and your library appears with a compatibility verdict on each game.</p>
+<p>Press Get started. Highball installs Rosetta if your Mac lacks it, downloads the Wine engine (a few
+minutes on a normal connection) and prepares one Windows environment for your games. The engine is
+assembled from pinned upstream releases, each one checked against a recorded SHA-256, so you get exactly
+the build that was tested. Then the library asks where your games are: install Steam, connect Epic, or
+pick a Windows program you already have. Your games appear with a compatibility verdict on each one,
+and every game's page says what Play will do before you press it.</p>
+<p>Environments, the engine and troubleshooting live in Settings (⌘,). You never need them to play a game.</p>
 
 <h2>Uninstalling</h2>
 <p>Drag the app to the Trash. Everything else lives in
-<code>~/Library/Application Support/Highball</code>, which holds your engines, bottles and games. Delete that
+<code>~/Library/Application Support/Highball</code>, which holds the engine, your Windows environments and your games. Delete that
 folder too if you want the disk space back, but note that your installed games live inside it.</p>
 
 <h2>If macOS says it cannot verify the app</h2>
