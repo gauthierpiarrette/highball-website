@@ -278,7 +278,7 @@ def faq_entries(title, game, blocked, label, stamp, has_recipe):
                           f"{r}. Highball can translate Direct3D through DXVK, DXMT or Apple's D3DMetal, and the "
                           f"right choice varies by game. The database records {r} for {title}"
                           + (f", and applying the {title} recipe sets it for you." if has_recipe
-                             else ". Set it in the bottle's settings before you launch.")))
+                             else ". Highball uses it automatically when the game has a row; to set it by hand, open Settings, then Environments.")))
         if has_recipe:
             out.append(qa(f"Is there a one-click setup for {title}?",
                           f"Yes. Highball ships a recipe for {title} that sets the tested renderer and any per-game "
@@ -656,7 +656,7 @@ def landing_page(data, base, counts, derived_count):
       <a href="/database/">Browse it</a> — it's yours to reuse.</p></div>
     <div class="card"><span class="mono" style="font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--amber)">Nothing to sign up for</span>
       <h2 style="font-size:1.15rem;margin:0 0 .5rem">No account, no telemetry</h2><p style="color:var(--ink2);font-size:.95rem">Highball asks for no login, phones nothing home,
-      and keeps every bottle on your own disk. The app is GPL-3 and the data is open; neither can be taken away later.</p></div>
+      and keeps every environment on your own disk. The app is GPL-3 and the data is open; neither can be taken away later.</p></div>
     <div class="card"><span class="mono" style="font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--amber)">Measured</span>
       <h2 style="font-size:1.15rem;margin:0 0 .5rem">Tuned where it counts</h2><p style="color:var(--ink2);font-size:.95rem">Launches use the faster in-process
       synchronisation path where the game tolerates it, which is worth real frame rate on CPU-bound titles.
