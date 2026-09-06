@@ -617,7 +617,7 @@ def landing_page(data, base, counts, derived_count):
     First run takes about 20 minutes while the engine downloads and Steam updates itself. After that, launching is instant.</p>
   <div style="margin:3rem auto 0;max-width:880px">
     <img src="/static/app.jpg" width="1600" height="1088" fetchpriority="high"
-         alt="Highball’s Library: twelve games in one cover grid, each with its source badge and the open database’s verdict"
+         alt="Highball’s Library: nine games in one cover grid, each with its source badge and the open database’s verdict"
          style="border-radius:10px;border:1px solid var(--line);display:block">
   </div>
 </header>
