@@ -37,6 +37,18 @@ PRED_LABEL = {"likely": ("Likely playable", "good"), "maybe": ("Maybe", "warn"),
               "unlikely": ("Unlikely", "bad"), "blocked": ("Blocked", "bad")}
 
 
+
+REPORT_FORM = "https://github.com/gauthierpiarrette/highball-db/issues/new?template=report.yml"
+
+
+def report_url(title=None, appid=None):
+    """The report form with the game already filled in: a report should cost one line."""
+    from urllib.parse import urlencode
+    q = {}
+    if title: q["title"] = title
+    if appid: q["steam_appid"] = str(appid)
+    return REPORT_FORM + ("&" + urlencode(q) if q else "")
+
 def slugify(s):
     s = re.sub(r"[’'`]", "", s.lower())
     s = re.sub(r"[^a-z0-9]+", "-", s).strip("-")
@@ -210,7 +222,7 @@ def renderer_matrix(game, reports):
         else:
             rows.append(f'<tr><td class="r unknown">{label}</td><td><span class="pill warn">Untested</span></td>'
                         f'<td class="sub">no report yet — '
-                        f'<a href="https://github.com/gauthierpiarrette/highball-db/issues/new?template=report.yml">'
+                        f'<a href="{report_url(game["title"], game.get("steam_appid"))}">'
                         f'send one</a></td></tr>')
     return ('<div class="tablewrap" tabindex="0" role="region" aria-label="Renderer verdicts">'
             '<table class="matrix"><thead><tr><th>Renderer</th><th>Verdict</th>'
@@ -397,13 +409,13 @@ def game_page(game, data, base):
         elif last:
             body.append(f'<p class="sub" style="margin-top:.7rem">Last confirmed {html.escape(last)}. That run '
                         f'predates per-report engine and macOS logging, so those are not recorded for it. '
-                        f'<a href="https://github.com/gauthierpiarrette/highball-db/issues/new?template=report.yml">'
+                        f'<a href="{report_url(game["title"], game.get("steam_appid"))}">'
                         f'A newer report</a> would carry both.</p>')
         else:
             body.append('<p class="sub" style="margin-top:.7rem">No dated Highball run yet. When one lands it '
                         'records the renderer, the engine build and the macOS version it was seen on — which is '
                         'what stops a verdict quietly rotting. '
-                        '<a href="https://github.com/gauthierpiarrette/highball-db/issues/new?template=report.yml">'
+                        f'<a href="{report_url(game["title"], game.get("steam_appid"))}">'
                         'Send one</a>.</p>')
 
     if game.get("notes"):
@@ -440,7 +452,7 @@ def game_page(game, data, base):
     body.append(f"""<h2>Contribute a result</h2>
     <p>This page is generated from an open database. If you have run {html.escape(title)} on Apple Silicon,
     working or not, a report takes a minute and fills in the empty rows above.
-    <a href="https://github.com/gauthierpiarrette/highball-db/issues/new?template=report.yml">Send a report</a>,
+    <a href="{report_url(title, appid)}">Send a report</a>,
     or read <a href="/docs/data/">how the data is put together</a>.</p>
     <p><a class="btn" href="https://github.com/gauthierpiarrette/highball/releases/latest/download/Highball.dmg">Download Highball</a></p>
     </div>""")
@@ -505,7 +517,7 @@ different graphics stack, different translation layers, different failure modes.
 <h2>Turn this into a real verdict</h2>
 <p>If you own {html.escape(title)}, running it once through Highball and sending the result is what turns this
 page from a guess into data — with the renderer, engine build and macOS version recorded.
-<a href="https://github.com/gauthierpiarrette/highball-db/issues/new?template=report.yml">Send a report</a>.</p>
+<a href="{report_url(title, appid)}">Send a report</a>.</p>
 <p><a class="btn" href="https://github.com/gauthierpiarrette/highball/releases/latest/download/Highball.dmg">Download Highball</a>
 <a class="btn ghost" href="/database/">Browse verified games</a></p>
 </div>"""
