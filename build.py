@@ -144,6 +144,7 @@ def layout(*, title, desc, path, body, base, noindex=False, og_image=None, jsonl
     <a href="/docs/troubleshooting/">Troubleshooting</a>
     <a href="https://github.com/gauthierpiarrette/highball">GitHub</a>
     <a href="https://github.com/gauthierpiarrette/highball/discussions">Discussions</a>
+    <a href="https://discord.gg/WnyYpXuf67">Discord</a>
     <a href="https://github.com/gauthierpiarrette/highball-db">Contribute data</a>
   </div>
   <p class="legal">Built on Wine, Gcenx's engine builds, DXVK, DXMT and Apple's Game Porting Toolkit —
