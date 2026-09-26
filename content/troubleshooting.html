@@ -38,6 +38,14 @@ one that works where the database says nothing yet,
 <p>If it uses kernel-level anti-cheat, it cannot be made to work.
 <a href="/docs/anti-cheat/">Here is why, and what your options are.</a></p>
 
+<h2>A controller is not recognised, or shows up twice</h2>
+<p>Wine sees a gamepad through two drivers on a Mac, the system HID path and SDL, and some games only
+work with SDL. From Highball 0.9.38 on, open the environment's page and apply the dependency
+"Controllers through SDL", then restart the environment. On an earlier version, set the same two values by
+hand with regedit inside the environment: under HKEY_CURRENT_USER\Software\Wine\WineBus, add the DWORD
+values DisableHidraw = 1 and Enable SDL = 1. This is what fixed an unrecognised controller in Elden Ring
+(<a href="https://github.com/gauthierpiarrette/highball-db/issues/228">report</a>).</p>
+
 <h2>Something else</h2>
 <p>Open an issue on <a href="https://github.com/gauthierpiarrette/highball/issues">GitHub</a>, ask in
 <a href="https://github.com/gauthierpiarrette/highball/discussions">Discussions</a>, or on the
