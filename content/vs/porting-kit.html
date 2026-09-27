@@ -62,8 +62,8 @@ open-source Legendary client, and has a Battle.net recipe. In Sikarugir, Steam i
 a hand-typed path. Porting Kit sits in between, for the titles it covers.</p>
 
 <h2>The data, including the gap</h2>
-<p>Highball's compatibility database is public and reusable: 101 curated games, 5 verified by hand on real
-Apple Silicon hardware, 39 blocked by kernel anti-cheat, plus 12,491 predictions derived from ProtonDB.
+<p>Highball's compatibility database is public and reusable: {curated} curated games, {verified} verified by hand on real
+Apple Silicon hardware, {blocked} blocked by kernel anti-cheat, plus {derived} predictions derived from ProtonDB.
 Curated data is CC0, predictions carry ODbL as their source requires, anti-cheat data keeps its MIT notice.
 Porting Kit's equivalent knowledge sits inside a closed app.</p>
 <p>The database records verdicts per renderer rather than one per game, because a title that black-screens
@@ -78,8 +78,9 @@ Userspace cases vary by title, so check the game rather than the vendor.
 <h2>Sikarugir is upstream, not the enemy</h2>
 <p>Gcenx maintains the macOS Wine builds Highball downloads. The engine Highball ships is one of his, as are
 the macOS DXVK and DXMT builds much of this ecosystem runs on and the official WineHQ macOS packages.
-Highball does not fork any of it: it pins upstream releases, and engine-level bugs get filed on his tracker
-rather than patched over quietly. If you want to support the layer that makes any of this work, support that
+Highball's default engine is his build, pinned as released, and engine-level bugs get filed on his
+tracker. Highball's opt-in Wine 11 engine is a separate build of CrossOver's published sources with a small
+public patch series. If you want to support the layer that makes any of this work, support that
 one first. <a href="/docs/credits/">Credits and where to send money.</a></p>
 <p>Sikarugir's README says it is not a replacement for CrossOver. That is fair. It is a power tool for
 people who want a permanent, portable wrapper and full control of the prefix.</p>

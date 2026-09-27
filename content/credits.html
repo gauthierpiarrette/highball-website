@@ -29,9 +29,12 @@ them before you think about me.</p>
 </ul>
 
 <h2>How Highball uses this work</h2>
-<p>Highball does not fork Wine and does not host engine binaries. It downloads pinned upstream releases,
-checks them against recorded hashes, and keeps the engine line where it belongs, with the people who maintain
-it. Engine-level bugs go upstream as reproductions rather than getting quietly worked around here.</p>
+<p>Highball's default engine is a pinned upstream release, Gcenx's Sikarugir build, checked against recorded
+hashes. Alongside it Highball builds its own opt-in Wine 11 engine from the Wine sources CodeWeavers publishes
+with CrossOver, under the LGPL, with a small patch series kept public in
+<a href="https://github.com/gauthierpiarrette/highball-engine">highball-engine</a>. Each patch is sent
+upstream once verified and dropped once upstream ships it. Engine components Highball needs a stable address
+for are mirrored on its own release page, byte for byte and pinned by hash.</p>
 <p>The compatibility database is deliberately open and reusable. Curated data is CC0, the ProtonDB-derived
 predictions carry ODbL as their source requires, and the anti-cheat data keeps its MIT notice. It is meant to
 be useful to anyone building in this space, including tools that compete with Highball.</p>

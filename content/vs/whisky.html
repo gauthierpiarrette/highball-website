@@ -29,21 +29,21 @@ knowledge lived in 254 wiki pages and a Discord rather than the app.</p>
 <table>
   <tr><th></th><th>Whisky (final)</th><th>frankea/Whisky fork</th><th>Highball</th></tr>
   <tr><td>Status</td><td>Archived, April 2025</td><td>Active, regular releases</td><td>Active</td></tr>
-  <tr><td>Engine</td><td>Wine 7.7, frozen</td><td>Wine 11.0, 11.15 beta</td><td>Wine 10 line</td></tr>
+  <tr><td>Engine</td><td>Wine 7.7, frozen</td><td>Wine 11.0, 11.15 beta</td><td>Wine 10 by default, Wine 11 opt-in</td></tr>
   <tr><td>Renderers</td><td>D3DMetal, DXVK</td><td>D3DMetal, DXVK 1.10.3, DXMT 0.80</td><td>DXVK, DXMT, D3DMetal, per bottle</td></tr>
   <tr><td>Launchers</td><td>Install them yourself</td><td>Reads an installed Steam library</td><td>One-click Steam, Epic via Legendary, Battle.net recipe</td></tr>
-  <tr><td>Compat data</td><td>254 wiki pages</td><td>83 bundled entries</td><td>101 curated games, 12,491 predictions</td></tr>
+  <tr><td>Compat data</td><td>254 wiki pages</td><td>83 bundled entries</td><td>{curated} curated games, {derived} predictions</td></tr>
   <tr><td>macOS</td><td>14+</td><td>15+</td><td>14+</td></tr>
   <tr><td>Licence</td><td>Free, GPL-3</td><td>Free, GPL-3</td><td>Free, GPL-3</td></tr>
 </table>
 </div>
-<p>Highball is notarized and auto-updating, with no account and no telemetry. Its database is open: 101
-curated games, 5 of them verified by hand on real hardware, 39 blocked by kernel anti-cheat, and 12,491
-predictions derived from ProtonDB. CC0 for the curated data, ODbL for predictions, MIT for anti-cheat.
+<p>Highball is notarized and auto-updating, with no account and no telemetry. Its database is open: {curated}
+curated games, {verified} of them verified by hand on real hardware, {blocked} blocked by kernel anti-cheat, and
+{derived} predictions derived from ProtonDB. CC0 for the curated data, ODbL for predictions, MIT for anti-cheat.
 <a href="/docs/data/">How it is built.</a></p>
-<p class="note">One thing the database cannot do yet: tell you which renderer to pick. Highball switches
-DXVK, DXMT and D3DMetal per bottle, but the number of games carrying two dated renderer verdicts is
-currently zero. It is a knob you turn, not a recommendation.</p>
+<p class="note">The database now picks the graphics mode: {picked} games carry the one to use, and Highball
+applies it on Play. Only {compared} of them have dated verdicts for two or more modes side by side, so for most games
+the pick is one report's finding, not a comparison.</p>
 
 <h2>Moving your games across</h2>
 <p class="note bad">Whisky bottles do not import into Highball, and no converter is planned. A Whisky bottle
@@ -64,17 +64,19 @@ engine at it inherits failures nobody can debug. Reinstall into a fresh bottle i
 <p>If a game misbehaves after the move, <a href="/docs/troubleshooting/">start here</a>.</p>
 
 <h2>The funding argument, since it will come up</h2>
-<p>Highball is not a repackaged CrossOver: its engines are assembled from pinned community Wine builds in the
-Gcenx and Sikarugir lineage. That does not make the point wrong. Someone has to pay for Wine on macOS, and
+<p>Highball's default engine is a pinned Sikarugir build from the Gcenx lineage. Its opt-in Wine 11
+engine is Highball's own build of the Wine sources CodeWeavers publishes with CrossOver 26.3, under the LGPL,
+with a small public patch series that is sent upstream. So part of Highball rests on CrossOver's work,
+which is his point exactly. Someone has to pay for Wine on macOS, and
 today CodeWeavers largely does. <a href="/docs/credits/">Who builds what Highball depends on.</a></p>
 
 <h2>The community fork is a real option</h2>
 <p>Adam Franke's <a href="https://github.com/frankea/Whisky">frankea/Whisky</a> picked the project up in
-January 2026 and has kept it moving: around 465 stars, releases every couple of weeks, signed and notarized,
+January 2026 and has kept it moving: around 800 stars, releases every couple of weeks, signed and notarized,
 GPL-3, no affiliate deals. If you liked Whisky you will lose nothing switching to it, and in several places
 it is ahead of Highball:</p>
 <ul>
-  <li><b>Newer engine.</b> Wine 11.0 stable with a Wine 11.15 beta track, against Highball's Wine 10 line.</li>
+  <li><b>Newer engine.</b> Wine 11.0 stable with a Wine 11.15 beta track as its main line, where Highball defaults to Wine 10 and offers its Wine 11 engine as an opt-in.</li>
   <li><b>Deeper diagnostics.</b> A crash classifier, remediation cards that apply a fix and report whether it
       worked, troubleshooting wizards. Highball has no equivalent, and it is the best answer anyone has built
       for the "my game just died" moment.</li>
@@ -94,7 +96,7 @@ good work by someone doing it for the right reasons.</p>
 recommendation and it is not wrong. <a href="/vs/crossover/">Longer comparison here.</a></p>
 <p>Use <b>Highball</b> if you want your games rather than your bottles on the first screen, one-click Steam
 and Epic instead of chasing installers, and a verdict before you spend an evening downloading. Do not use it
-on an Intel Mac or macOS 13, if your game is one of the 39 blocked by kernel anti-cheat, or if it has a
+on an Intel Mac or macOS 13, if your game is one of the {blocked} blocked by kernel anti-cheat, or if it has a
 native Mac build, which beats translation every time. Highball is also new: the fork has roughly twenty times
 its installed base and months more of bug reports behind it.</p>
 <p><a class="btn" href="https://github.com/gauthierpiarrette/highball/releases/latest/download/Highball.dmg">Download Highball.dmg</a></p>

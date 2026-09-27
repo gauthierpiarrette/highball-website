@@ -18,7 +18,7 @@ happens to your fixes over time.</p>
   <tr><td>Licence</td><td>GPL-3</td><td>Proprietary app on top of open-source Wine</td></tr>
   <tr><td>Account</td><td>None</td><td>Licence key and activation</td></tr>
   <tr><td>Updates</td><td>Auto-updating, notarized DMG, no gate</td><td>12 months of updates per licence. An expired licence keeps the last version you had, but stops receiving updates.</td></tr>
-  <tr><td>Compatibility data</td><td>101 curated games, open licence, reusable</td><td>22,655 applications, proprietary</td></tr>
+  <tr><td>Compatibility data</td><td>{curated} curated games, open licence, reusable</td><td>22,655 applications, proprietary</td></tr>
   <tr><td>Renderers</td><td>DXVK, DXMT, D3DMetal, switchable per bottle</td><td>DXVK, DXMT, D3DMetal, Wine D3D, switchable per bottle</td></tr>
   <tr><td>Kernel anti-cheat</td><td><span class="pill bad">No</span></td><td><span class="pill bad">No</span></td></tr>
   <tr><td>Support</td><td>GitHub issues</td><td>Email and phone support from staff</td></tr>
@@ -67,12 +67,12 @@ the anti-cheat data keeps AreWeAntiCheatYet's MIT notice. Fork it, ship it in yo
 needed. CodeWeavers' database is a genuinely better database and it is also theirs.
 <a href="/docs/data/">How the data works.</a></p>
 
-<p><b>Verdicts name a renderer, and dated runs record the engine build.</b> That structure is the point: a game that black-screens under one translation layer often runs under another, so a single verdict per game throws away the part you need. Being straight about the fill: 40 of the 101 curated entries have no renderer recorded yet, only the 5 verified ones carry a date and an engine build, and exactly one carries a macOS version. The schema is ahead of the data, and the empty rows are printed as open asks rather than hidden.</p>
+<p><b>Verdicts name a renderer, and dated runs record the engine build.</b> That structure is the point: a game that black-screens under one translation layer often runs under another, so a single verdict per game throws away the part you need. Being straight about the fill: {unpicked} of the {curated} curated entries have no renderer recorded yet, and only {dated} carry a date and an engine build. The schema is ahead of the data, and the empty rows are printed as open asks rather than hidden.</p>
 
 <div class="note">
 <p><b>Being straight about the coverage.</b> The per-renderer structure is real. The coverage is not there yet.
-Of 101 curated games, 5 are verified by hand on real hardware, and today <b>no game has two dated renderer
-verdicts</b>. The rest of the database is 39 titles blocked by kernel anti-cheat and 12,491 ProtonDB-derived
+Of {curated} curated games, {verified} are verified by hand on real hardware, and only <b>{compared} games have
+verdicts for two or more renderers</b>. The database also holds {blocked} titles blocked by kernel anti-cheat and {derived} ProtonDB-derived
 predictions, which are odds from Linux, not answers about a Mac. Anyone telling you a young database beats a
 twenty-year-old one on coverage is selling something. <a href="/database/">Look for yourself.</a></p>
 </div>

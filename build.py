@@ -675,9 +675,9 @@ def landing_page(data, base, counts, derived_count):
       synchronisation path where the game tolerates it, which is worth real frame rate on CPU-bound titles.
       Frame caps and async shader compilation are one toggle away.</p></div>
     <div class="card"><span class="mono" style="font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--amber)">Built to last</span>
-      <h2 style="font-size:1.15rem;margin:0 0 .5rem">Not tied to one Wine build</h2><p style="color:var(--ink2);font-size:.95rem">Highball doesn't fork Wine or host
-      engine binaries. Engines are defined in a manifest and pulled from pinned upstream releases, so the project
-      follows the wider Wine ecosystem instead of freezing against it.</p></div>
+      <h2 style="font-size:1.15rem;margin:0 0 .5rem">Not tied to one Wine build</h2><p style="color:var(--ink2);font-size:.95rem">Engines are defined in a manifest and
+      pinned by hash: a community Wine 10 build by default, and Highball's own Wine 11 build from CrossOver's
+      published sources, with every patch public. Switching engine is a setting, never a rewrite.</p></div>
   </div>
 </section>
 
@@ -881,6 +881,11 @@ def main():
 
     ctx = {"verified": counts["verified-local"], "curated": len(games),
            "derived": f"{derived_count:,}", "blocked": counts["blocked-anticheat"],
+           # games whose row names the mode Highball applies, and games compared across two or more
+           "picked": sum(1 for g in games if g.get("renderer")),
+           "unpicked": sum(1 for g in games if not g.get("renderer")),
+           "compared": sum(1 for g in games if isinstance(g.get("rendererResults"), dict) and len(g["rendererResults"]) >= 2),
+           "dated": sum(1 for g in games if g.get("lastVerified")),
            "year": datetime.date.today().year}
     indexable += content_pages(a.out, a.base, ctx)
 
@@ -890,7 +895,7 @@ def main():
 <h1>That page isn't here</h1>
 <p>The link may be old, or the game may not be in the database under that name yet.</p>
 <ul>
-  <li><a href="/database/">Search the compatibility database</a> — 101 curated games plus predictions for
+  <li><a href="/database/">Search the compatibility database</a> — {len(games)} curated games plus predictions for
       thousands more.</li>
   <li><a href="/docs/install/">Install Highball</a></li>
   <li><a href="/docs/troubleshooting/">Troubleshooting</a></li>
