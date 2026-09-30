@@ -29,8 +29,16 @@ STATUS = {
                           "Community consensus (AppleGamingWiki, r/macgaming); unverified by Highball."),
     "blocked-anticheat": ("Blocked", "bad",
                           "Kernel anti-cheat. Structurally impossible under any compatibility layer."),
+    "blocked-publisher": ("Blocked by publisher", "bad",
+                          "The publisher stops the game on macOS on purpose. No compatibility layer changes that."),
 }
-STATUS_ORDER = {"verified-local": 0, "reported-upstream": 1, "community": 2, "blocked-anticheat": 3}
+STATUS_ORDER = {"verified-local": 0, "reported-upstream": 1, "community": 2, "blocked-anticheat": 3,
+                "blocked-publisher": 4}
+
+
+def is_blocked(status):
+    """Every kind of block: the game cannot run on a Mac, so no renderer advice and no download."""
+    return (status or "").startswith("blocked-")
 RENDERERS = ["dxvk", "dxmt", "d3dmetal"]
 RENDERER_LABEL = {"dxvk": "DXVK", "dxmt": "DXMT", "d3dmetal": "D3DMetal", "wined3d": "wined3d"}
 PRED_LABEL = {"likely": ("Likely playable", "good"), "maybe": ("Maybe", "warn"),
@@ -244,7 +252,13 @@ def faq_entries(title, game, blocked, label, stamp, has_recipe):
         return {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}}
     nm = game.get("nativeMac") or {}
     out = []
-    if blocked:
+    if blocked and game.get("status") == "blocked-publisher":
+        out.append(qa(f"Does {title} work on Mac?",
+                      f"No. The publisher of {title} checks whether the game is running on macOS and stops it on "
+                      f"purpose, so it cannot run through Highball, CrossOver, Whisky or any other compatibility "
+                      f"layer. That is the publisher's decision, not a bug. Cloud streaming runs the real Windows "
+                      f"build remotely, where the check does not apply."))
+    elif blocked:
         if nm.get("available"):
             out.append(qa(f"Does {title} work on Mac?",
                           f"Yes, but not through a compatibility layer. {nm.get('where', 'The publisher')} ships a "
@@ -307,13 +321,16 @@ def game_page(game, data, base):
     reports = data["reports"].get(slug, [])
     recipe = data["recipes"].get(slug)
     ac = game.get("anticheat")
-    blocked = status == "blocked-anticheat"
+    blocked = is_blocked(status)
+    publisher_block = status == "blocked-publisher"
     last = game.get("lastVerified")
 
     # freshness stamp — the field competitors don't publish per renderer/engine
     engine = next((r.get("engine") for r in reversed(reports) if r.get("engine")), None)
     macos = next((r.get("macos") for r in reversed(reports) if r.get("macos")), None)
-    if blocked:
+    if publisher_block:
+        stamp = (f"tested {last}, stopped by the publisher" if last else "the publisher's choice, not a test result")
+    elif blocked:
         stamp = "structural, not a test result"
     elif last:
         bits = [f"last confirmed {last}"]
@@ -324,7 +341,11 @@ def game_page(game, data, base):
         stamp = "no dated Highball run yet"
 
     nm = game.get("nativeMac") or {}
-    if blocked and nm.get("available"):
+    if publisher_block:
+        verdict = (f"<b>{html.escape(title)} will not run on a Mac.</b> Its publisher checks for macOS and stops "
+                   f"the game on purpose, through Highball, CrossOver, Whisky or any other compatibility layer. "
+                   f"That is the publisher's choice, not a bug anyone can fix here.")
+    elif blocked and nm.get("available"):
         verdict = (f"<b>Play the native Mac version.</b> {html.escape(nm.get('where', 'The publisher'))} ships an "
                    f"official macOS build of {html.escape(title)}. The <i>Windows</i> build cannot run under "
                    f"Highball, CrossOver, Whisky or a virtual machine, because its anti-cheat loads a Windows "
@@ -385,7 +406,16 @@ def game_page(game, data, base):
         Metal with nothing translating in between, so it will beat anything on this page.
         <a href="/docs/native-mac-games/">Other games in the same situation</a>.</div>""")
 
-    if blocked:
+    if publisher_block:
+        body.append(f"""<div class="note bad"><b>Blocked by the publisher.</b>
+        The game stops itself when it finds macOS, whatever the renderer or the engine, so don't spend the
+        download. The notes below say what it shows and when it was last tried.</div>
+        <h2>What actually works instead</h2>
+        <p>Cloud streaming runs the real Windows build on someone else's machine, where the check does not apply,
+        if a service carries the game. <a href="https://www.nvidia.com/en-us/geforce-now/">GeForce NOW</a> has a
+        native Mac app and <a href="/docs/game-pass/">Xbox Cloud Gaming runs in a browser</a>; both publish the
+        games they carry.</p>""")
+    elif blocked:
         names = ", ".join(ac["names"]) if ac and ac.get("names") else "kernel anti-cheat"
         body.append(f"""<div class="note bad"><b>Anti-cheat: {html.escape(names)}.</b>
         Don't spend the download. Kernel-level anti-cheat needs a Windows driver running in ring 0;
@@ -474,7 +504,10 @@ def game_page(game, data, base):
     if len(page_title) > 60:
         page_title = f"{title} on Mac"[:60] if len(f"{title} on Mac") <= 60 else f"{title[:52].rstrip()}… on Mac"
 
-    if blocked:
+    if publisher_block:
+        desc = (f"{title} cannot run on a Mac: its publisher stops the game when it detects macOS, through any "
+                f"compatibility layer. Here is what to do instead.")
+    elif blocked:
         desc = (f"{title} cannot run on a Mac: kernel anti-cheat needs a Windows driver that no compatibility "
                 f"layer can load. Here is why, and what to do instead.")
     else:
@@ -685,7 +718,7 @@ def landing_page(data, base, counts, derived_count):
   <h2 style="font-size:1.6rem;text-align:center;margin-bottom:1rem">Verified on real hardware</h2>
   <p style="text-align:center;color:var(--ink2);max-width:40em;margin:0 auto 1.2rem">
     {counts['verified-local']} games tested by hand on Apple Silicon, {counts['reported-upstream']} reported upstream,
-    {counts['community']} from community consensus, {counts['blocked-anticheat']} honestly marked impossible —
+    {counts['community']} from community consensus, {counts['blocked-anticheat'] + counts['blocked-publisher']} honestly marked impossible —
     plus {derived_count:,} predictions.</p>
   <p style="text-align:center">{chips}</p>
   <p style="text-align:center;margin-top:1.2rem"><a class="btn ghost" href="/database/">Open the database</a></p>
@@ -880,7 +913,7 @@ def main():
     }, open(os.path.join(a.out, "data/games.json"), "w"), indent=1)
 
     ctx = {"verified": counts["verified-local"], "curated": len(games),
-           "derived": f"{derived_count:,}", "blocked": counts["blocked-anticheat"],
+           "derived": f"{derived_count:,}", "blocked": counts["blocked-anticheat"] + counts["blocked-publisher"],
            # games whose row names the mode Highball applies, and games compared across two or more
            "picked": sum(1 for g in games if g.get("renderer")),
            "unpicked": sum(1 for g in games if not g.get("renderer")),
