@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="$lang">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>$title</title><meta name="description" content="$description">
+<meta name="theme-color" content="#10100f"><meta name="color-scheme" content="dark">
+<link rel="canonical" href="$canonical">$alternates
+<meta property="og:type" content="website"><meta property="og:title" content="$title"><meta property="og:description" content="$description"><meta property="og:url" content="$canonical"><meta property="og:image" content="$base/static/og.jpg">
+<meta property="og:site_name" content="Highball"><meta property="og:locale" content="$ogLocale">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="$title">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="$title"><meta name="twitter:description" content="$description"><meta name="twitter:image" content="$base/static/og.jpg"><meta name="twitter:image:alt" content="$title">
+<link rel="icon" href="$root/static/favicon.ico"><link rel="apple-touch-icon" href="$root/static/apple-touch-icon.png">
+<link rel="stylesheet" href="$root/static/site.css">
+<script id="site-config" type="application/json">$config</script>
+<script src="$root/static/language.js"></script>
+<script defer src="$root/static/site.js"></script>
+<script type="application/ld+json">$schema</script>
+$extraHead
+</head>
+<body class="$pageClass">
+<a class="skip" href="#main">{{skip}}</a>
+<header class="header">
+ <div class="nav-shell">
+ <a class="brand" href="$home" aria-label="Highball"><img src="$root/static/logo-128.png" alt="" width="36" height="36"><span>Highball<span class="brand-dot">.</span></span></a>
+ <nav class="main-nav" id="main-nav" aria-label="Highball">
+ <a href="$home#games">{{navGames}}</a><a href="$home#features">{{navFeatures}}</a><a href="$home#open-source">{{navSource}} <span class="tiny-arrow">↗</span></a>
+ </nav>
+ <div class="nav-actions">
+ <label class="language-switch"><span aria-hidden="true">◎</span><select aria-label="{{language}}" id="language-select">$languageOptions</select></label>
+ <a class="button button-small nav-download" href="$download">$apple {{download}}</a>
+ <button class="menu-button" aria-label="{{menu}}" aria-controls="main-nav" aria-expanded="false"><span></span><span></span></button>
+ </div>
+ </div>
+</header>
+<main id="main">$body</main>
+<footer class="footer section-shell">
+ <div class="footer-top"><div><a class="brand" href="$home"><img src="$root/static/logo-128.png" alt="" width="32" height="32"><span>Highball<span class="brand-dot">.</span></span></a><p>{{footerLine}}</p></div>
+ <div class="footer-links"><a href="$database">{{check}}</a><a href="$repo">GitHub ↗</a><a href="https://github.com/gauthierpiarrette/highball/discussions">{{community}} ↗</a><a href="$credits">{{credits}}</a></div></div>
+ <div class="footer-bottom"><span>© $year Highball · GPL-3.0</span><a href="https://github.com/gauthierpiarrette/highball-website">{{siteSource}} ↗</a><span>{{requirements}}</span></div>
+</footer>
+</body></html>
