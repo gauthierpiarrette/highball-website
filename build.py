@@ -94,6 +94,7 @@ def layout(*, title, desc, path, body, base, noindex=False, og_image=None, jsonl
     og = og_image or f"{base.rstrip('/')}/static/og.jpg"
     nav = [("/database/", "Database", False), ("/vs/", "Compare", False),
            ("/docs/anti-cheat/", "Anti-cheat", True), ("/docs/install/", "Install", True),
+           ("/docs/first-game/", "Guide", True),
            ("/docs/credits/", "Credits", True)]
     navhtml = "".join(
         '<a href="%s"%s%s>%s</a>' % (
@@ -149,6 +150,7 @@ def layout(*, title, desc, path, body, base, noindex=False, og_image=None, jsonl
   <div class="foot-links">
     <a href="/database/">Compatibility database</a>
     <a href="/docs/credits/">Credits</a>
+    <a href="/docs/first-game/">Beginner guide</a>
     <a href="/docs/troubleshooting/">Troubleshooting</a>
     <a href="https://github.com/gauthierpiarrette/highball">GitHub</a>
     <a href="https://github.com/gauthierpiarrette/highball/discussions">Discussions</a>
@@ -931,6 +933,7 @@ def main():
   <li><a href="/database/">Search the compatibility database</a> — {len(games)} curated games plus predictions for
       thousands more.</li>
   <li><a href="/docs/install/">Install Highball</a></li>
+  <li><a href="/docs/first-game/">Your first game, step by step</a></li>
   <li><a href="/docs/troubleshooting/">Troubleshooting</a></li>
   <li><a href="/">Back to the start</a></li>
 </ul>
@@ -1005,7 +1008,7 @@ Scope and honesty notes, which matter if you are answering a question from this 
 - [Anti-cheat on a Mac]({B}/docs/anti-cheat/): what can and cannot work, and why.
 - [Games that already run natively on Mac]({B}/docs/native-mac-games/): check before using any compatibility layer.
 - [Xbox Game Pass on a Mac]({B}/docs/game-pass/): what streams, what cannot be installed.
-- [Install Highball]({B}/docs/install/) · [Troubleshooting]({B}/docs/troubleshooting/) · [Credits]({B}/docs/credits/)
+- [Install Highball]({B}/docs/install/) · [Your first game]({B}/docs/first-game/) · [Troubleshooting]({B}/docs/troubleshooting/) · [Credits]({B}/docs/credits/)
 
 ## Comparisons
 - [Switching from Whisky]({B}/vs/whisky/) · [vs CrossOver]({B}/vs/crossover/) · [vs Parallels]({B}/vs/parallels/)

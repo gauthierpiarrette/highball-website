@@ -1,0 +1,73 @@
+<!-- Your first game with Highball | A beginner's walk through Highball, from installing it and getting your Steam games in to pressing Play, and what to change when a game shows no picture. -->
+<h1>Your first game</h1>
+<p>This page is for someone who has never used Highball, or anything like it. It takes you from an
+empty Mac to a Windows game on screen, and then through the one setting that fixes most games that
+start without a picture.</p>
+
+<h2>What Highball does</h2>
+<p>Windows games are made for Windows. Highball runs them on a Mac anyway, using Wine, which translates
+what the game asks of Windows into what macOS understands. You do not need a copy of Windows.</p>
+<p>Highball keeps your games in a Windows environment, a folder that looks like a small Windows PC to
+the game. One environment is made for you on first launch and most people never need another.</p>
+
+<h2>Before you start</h2>
+<ul>
+  <li>A Mac with Apple Silicon, M1 or newer, on macOS 14 Sonoma or later.</li>
+  <li>About 8&nbsp;GB of free space for Highball itself, plus the size of your games.</li>
+  <li>8&nbsp;GB of memory is enough for smaller and older games. Close other apps while you play, and
+    expect big recent games to struggle or not start.</li>
+</ul>
+
+<h2>1. Install Highball</h2>
+<p>Download the app from the <a href="/docs/install/">install page</a>, drag it to Applications and open
+it. Press <b>Get started</b>. Highball downloads what it needs and prepares the Windows environment.
+It takes a few minutes, and you only do it once.</p>
+
+<h2>2. Get your games in</h2>
+<p>Press <b>Install Steam</b> and sign in with your Steam account when Steam's window appears. The very
+first start of Steam takes 15 to 25 minutes because it updates itself. Highball shows that it is
+working at the bottom of its window. Leave it alone until the sign-in window appears. Later starts are
+quick.</p>
+<p>Your Steam games then show up in Highball's library. Install a game from Steam as you would on a
+PC. Epic games work too, through <b>Connect Epic</b>.</p>
+
+<h2>3. Check the verdict, then press Play</h2>
+<p>Every game in the library shows a verdict under its cover. Verified means it was run here, Community
+and Reported mean other players say it works, and Blocked means it cannot run on a Mac at all, usually
+because of an online game's anti-cheat. Click a game's name to open its page. The page says in plain
+words what will happen when you press <b>Play</b>, and any known problem with its fix. Then press Play.
+The round play button that appears on a cover under the pointer starts the game straight away.</p>
+
+<h2>4. When the game shows no picture</h2>
+<p>A black window, a white window, or a game that opens and closes at once almost always means the
+graphics mode does not suit that game. Highball can draw a game in several ways, and games differ in
+which one they like. When a game quits right away, Highball offers another mode for next time. Say
+yes and press Play again. When a game ran but looked wrong, answer <b>Had problems</b> when Highball
+asks how it went, and it offers the next mode the same way.</p>
+<p>To choose yourself, open the game's page, open <b>Advanced</b>, and change <b>Mode for this game</b>.
+Try them in this order and press Play after each change.</p>
+<ol>
+  <li><b>DXVK (Vulkan on Metal)</b> for most older games and DirectX 9 or 11 games.</li>
+  <li><b>DXMT (DirectX 11 on Metal)</b> for DirectX 11 games, often the fastest when it works.</li>
+  <li><b>Apple's DirectX 12 support</b> for recent DirectX 12 games. Highball asks you to accept
+    Apple's licence the first time.</li>
+  <li><b>Wine's own Direct3D</b> for very old games and small 2D ones.</li>
+</ol>
+<p>The change applies to that game only. If a mode works where the game's page said nothing yet,
+<a href="https://github.com/gauthierpiarrette/highball-db/issues/new?template=report.yml">send a report</a>
+so the next player gets it automatically.</p>
+
+<h2>5. When a game asks for something Windows usually has</h2>
+<p>Some games need an extra Windows component, such as the .NET Framework or the Visual C++ runtimes.
+When Highball knows a game needs one, it installs it before the game starts. To add one yourself, open Settings (⌘,),
+then Environments, pick your environment and press <b>Add</b> next to <b>Windows components</b>.
+You can add the .NET Framework 4.8, the Visual C++ runtimes, Microsoft's core fonts, Japanese fonts and
+controller support there.</p>
+<p>For anything else, right-click the environment, choose <b>Full page</b>, then
+<b>Run a Windows program…</b>, and pick the installer you downloaded.</p>
+
+<h2>6. Still stuck</h2>
+<p>The <a href="/docs/troubleshooting/">troubleshooting page</a> covers the common problems. If your game is
+not there, open Settings, then Troubleshooting, and press <b>Report a problem…</b>, which opens a report
+with your Mac's details and a summary of your most recent game log already filled in. That summary
+usually shows the cause, so you rarely need to explain more than what you saw.</p>
