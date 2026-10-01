@@ -34,6 +34,14 @@ other mode. To set a mode by hand, open Settings, then Environments, then the en
 one that works where the database says nothing yet,
 <a href="https://github.com/gauthierpiarrette/highball-db/issues/new?template=report.yml">send a report</a>.</p>
 
+<h2>Sound crackles or stutters in a game</h2>
+<p>Some games keep very little sound queued, and at 48 kHz the Mac asks Wine for more at a time than
+they have, so it plays short silences a few times a second. Open Audio MIDI Setup (in Applications,
+Utilities), select your speakers or wired headphones, set Format to 96,000 Hz (or 88,200 Hz), and restart
+the game. Measured with Counter-Strike 2 on an M4, that took two minutes of menu music from 324 dropouts
+to none (<a href="https://github.com/gauthierpiarrette/highball/issues/127">report</a>). Bluetooth
+headphones and many monitors do not offer those rates.</p>
+
 <h2>The game refuses to start because of anti-cheat</h2>
 <p>If it uses kernel-level anti-cheat, it cannot be made to work.
 <a href="/docs/anti-cheat/">Here is why, and what your options are.</a></p>
