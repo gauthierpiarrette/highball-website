@@ -123,18 +123,20 @@ class Builder:
             card=card.replace('</div></a>',f'<small class="card-genres" lang="{esc(meta.get("language","en"))}">{esc(tags)}</small></div></a>')
         return card
 
-    def render(self,lang,route,body,title=None,desc=None,page='home',noindex=False,substitutions=None,search_mode=None):
+    def render(self,lang,route,body,title=None,desc=None,page='home',noindex=False,substitutions=None,search_mode=None,localized=True):
         t=self.locales[lang]
         canonical=self.base+'/' + (f'{lang}/' if lang!='en' else '') + route
-        config={'lang':lang,'root':self.root,'home':self.path(lang),'database':self.path(lang,'database/'),'languages':list(LANGUAGES),'detectLanguage':route=='' and lang=='en','route':route,'translations':{k:t[k] for k in ['all','verified-local','reported-upstream','communityStatus','blocked-anticheat','blocked-publisher','prediction','likely','maybe','unlikely','blocked','results','more','empty','loading','error','retry','predictionNote','placeholder','viewGame','reports','resultOne','mediaCredit','viewSteam','openScreenshot','imageCount']}}
+        available_languages=list(LANGUAGES) if localized else ['en']
+        config={'lang':lang,'root':self.root,'home':self.path(lang),'database':self.path(lang,'database/'),'languages':available_languages,'detectLanguage':route=='' and lang=='en','route':route,'translations':{k:t[k] for k in ['all','verified-local','reported-upstream','communityStatus','blocked-anticheat','blocked-publisher','prediction','likely','maybe','unlikely','blocked','results','more','empty','loading','error','retry','predictionNote','placeholder','viewGame','reports','resultOne','mediaCredit','viewSteam','openScreenshot','imageCount']}}
         if search_mode: config['searchMode']=search_mode
         lang_options=''.join(f'<option value="{code}" {"selected" if code==lang else ""}>{code.upper() if code==lang else code.upper()+" · "+esc(name)}</option>' for code,name in LANGUAGES.items())
         schema={'@context':'https://schema.org','@type':'WebPage','name':title or t['metaTitle'],'url':canonical,'inLanguage':lang}
         if page=='home': schema={'@context':'https://schema.org','@type':'SoftwareApplication','name':'Highball','applicationCategory':'GameApplication','operatingSystem':'macOS 14+ (Apple Silicon)','url':canonical,'downloadUrl':DOWNLOAD,'license':REPO+'/blob/main/LICENSE','offers':{'@type':'Offer','price':'0','priceCurrency':'USD'}}
         schema.update(description=desc or t['metaDescription'],inLanguage=lang)
-        alternates=''.join(f'<link rel="alternate" hreflang="{code}" href="{self.base}/{"" if code=="en" else code+"/"}{route}">' for code in LANGUAGES)
-        alternates+=f'<link rel="alternate" hreflang="x-default" href="{self.base}/{route}">'
-        values={'lang':lang,'title':esc(title or t['metaTitle']),'description':esc(desc or t['metaDescription']),'canonical':esc(canonical),'alternates':alternates,'base':esc(self.base),'root':self.root,'home':self.path(lang),'database':self.path(lang,'database/'),'credits':self.path(lang,'docs/credits/'),'download':DOWNLOAD,'repo':REPO,'dbRepo':DB_REPO,'report':REPORT,'year':dt.date.today().year,'body':body,'heroAsset':esc(self.media['hero']['file']),'heroPlaceholder':'<span class="placeholder-label">{{placeholder}}</span>' if self.media['hero']['placeholder'] else '', 'appAsset':esc(self.media['app']), 'dlssOriginal':esc(self.media['dlss']['original']),'dlssUpscaled':esc(self.media['dlss']['upscaled']),'comparisonClass':'is-placeholder' if self.media['dlss']['placeholder'] else '', 'dlssPlaceholder':'<span class="placeholder-label">{{placeholder}}</span>' if self.media['dlss']['placeholder'] else '', 'config':safe_json(config),'schema':safe_json(schema),'languageOptions':lang_options,'pageClass':page,'extraHead':'<meta name="robots" content="noindex,follow">' if noindex else '',**ICONS}
+        alternates=''.join(f'<link rel="alternate" hreflang="{code}" href="{self.base}/{"" if code=="en" else code+"/"}{route}">' for code in available_languages) if localized else ''
+        if localized: alternates+=f'<link rel="alternate" hreflang="x-default" href="{self.base}/{route}">'
+        lang_options=''.join(f'<option value="{code}" {"selected" if code==lang else ""}>{code.upper() if code==lang else code.upper()+" · "+esc(LANGUAGES[code])}</option>' for code in available_languages)
+        values={'lang':lang,'title':esc(title or t['metaTitle']),'description':esc(desc or t['metaDescription']),'canonical':esc(canonical),'alternates':alternates,'base':esc(self.base),'root':self.root,'home':self.path(lang),'database':self.path(lang,'database/'),'credits':self.path(lang,'docs/credits/'),'firstGame':self.path('en','docs/first-game/'),'troubleshooting':self.path('en','docs/troubleshooting/'),'download':DOWNLOAD,'repo':REPO,'dbRepo':DB_REPO,'report':REPORT,'year':dt.date.today().year,'body':body,'heroAsset':esc(self.media['hero']['file']),'heroPlaceholder':'<span class="placeholder-label">{{placeholder}}</span>' if self.media['hero']['placeholder'] else '', 'appAsset':esc(self.media['app']), 'dlssOriginal':esc(self.media['dlss']['original']),'dlssUpscaled':esc(self.media['dlss']['upscaled']),'comparisonClass':'is-placeholder' if self.media['dlss']['placeholder'] else '', 'dlssPlaceholder':'<span class="placeholder-label">{{placeholder}}</span>' if self.media['dlss']['placeholder'] else '', 'config':safe_json(config),'schema':safe_json(schema),'languageOptions':lang_options,'pageClass':page,'extraHead':'<meta name="robots" content="noindex,follow">' if noindex else '',**ICONS}
         values['ogLocale']={'en':'en_US','es':'es_AR','ru':'ru_RU','zh':'zh_CN','ja':'ja_JP','ko':'ko_KR','pt':'pt_BR'}[lang]
         hero_concept=self.media['hero'].get('concept',False)
         dlss_concept=self.media['dlss'].get('concept',False)
@@ -274,6 +276,15 @@ class Builder:
         for route,(key,content) in routes.items():
             body='<article class="doc-page section-shell"><a class="text-link" href="$home">← Highball</a><p class="eyebrow">HIGHBALL</p><h1>{{'+key+'}}</h1>'+content+'</article>'
             self.render(lang,f'docs/{route}/',body,title=self.locales[lang][key]+' — Highball',page='docs')
+        if lang=='en':
+            for slug,title,description in [
+                ('first-game','Your first game — Highball',"A beginner-friendly guide to installing Highball, bringing in your Windows games, and getting a game running on your Mac."),
+                ('troubleshooting','Troubleshooting Highball — Highball',"Solutions for common Highball setup, graphics, audio, controller, and anti-cheat problems on Mac."),
+            ]:
+                content=(HERE/'content'/f'{slug}.html').read_text(encoding='utf-8')
+                content=re.sub(r'href="/(docs|database)/',lambda m:f'href="{self.root}/'+m.group(1)+'/',content)
+                body='<article class="doc-page section-shell"><a class="text-link" href="$home">← Highball</a>'+content+'</article>'
+                self.render('en',f'docs/{slug}/',body,title=title,desc=description,page='english-doc',localized=False)
 
     def build(self):
         # Only clear an explicitly generated directory, never source or database paths.
@@ -345,8 +356,12 @@ class Builder:
             entries.append(f'<url><loc>{esc(url)}</loc>{alternates}</url>')
         self.write('sitemap.xml','<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">'+''.join(entries)+'</urlset>')
         self.write('robots.txt',f'User-agent: *\nAllow: /\nSitemap: {self.base}/sitemap.xml\n')
+        curated_count=len(self.games)
+        prediction_count=len(self.predictions)
+        verified=sum(g.get('status')=='verified-local' for g in self.games)
+        self.write('llms.txt',f'''# Highball\n\n> Highball is a free, open-source macOS app for running Windows games on Apple Silicon, with a public compatibility database.\n\n## Scope and data\n- {curated_count} curated game entries, including {verified} verified on Apple Silicon.\n- Linux/Proton-derived predictions cover {prediction_count:,} additional games; these are estimates, not Mac compatibility verdicts.\n- Curated compatibility data is CC0; predictions are ODbL 1.0; anti-cheat data is MIT. Steam artwork and store metadata retain their respective rights.\n- Kernel-level anti-cheat can prevent games such as Valorant from running through macOS compatibility layers. Check each game's evidence before installing.\n\n## Key pages\n- [Highball home]({self.base}/)\n- [Compatibility database]({self.base}/database/)\n- [Your first game]({self.base}/docs/first-game/)\n- [Troubleshooting]({self.base}/docs/troubleshooting/)\n- [Anti-cheat guide]({self.base}/docs/anti-cheat/)\n- [Curated game data]({self.base}/data/games.json)\n- [Predictions]({self.base}/data/predictions.json)\n- [Database repository](https://github.com/gauthierpiarrette/highball-db)\n- [Website repository](https://github.com/gauthierpiarrette/highball-website)\n''')
         if not self.root: self.write('CNAME',urlsplit(self.base).hostname+'\n')
-        body='<section class="doc-page section-shell"><p class="eyebrow">404 / HIGHBALL</p><h1>{{notFound}}</h1><p>{{notFoundText}}</p><a class="button" href="$home">{{home}} ↗</a></section>'
+        body='<section class="doc-page section-shell"><p class="eyebrow">404 / HIGHBALL</p><h1>{{notFound}}</h1><p>{{notFoundText}}</p><a class="button" href="$home">{{home}} ↗</a> <a class="text-link" href="$firstGame">{{firstGameLabel}} ↗</a></section>'
         self.render('en','404/',body,title='404 — Highball',page='docs',noindex=True)
         shutil.copyfile(self.out/'404/index.html',self.out/'404.html')
         print(f'Built {len(LANGUAGES)} languages, {len(self.games)} curated games, {len(self.predictions):,} searchable predictions → {self.out}')

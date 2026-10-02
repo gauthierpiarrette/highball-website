@@ -161,5 +161,7 @@
   "compatibilityCaveat": "互換性とパフォーマンスはゲームとMacによって異なります。ダウンロード前に最新の報告を確認してください。",
   "blockedGamesLink": "アンチチートでブロックされる全{count}本のゲーム",
   "blocked-publisher": "パブリッシャーによるブロック",
-  "publisherBlockNote": "パブリッシャーがWindows版のmacOSでの起動をブロックしています。グラフィックエンジンを変えても制限は解除されません。"
+  "publisherBlockNote": "パブリッシャーがWindows版のmacOSでの起動をブロックしています。グラフィックエンジンを変えても制限は解除されません。",
+  "firstGameLabel": "初めてのゲームガイド",
+  "troubleshootingLabel": "トラブルシューティング"
 }

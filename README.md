@@ -38,7 +38,7 @@ python3 build.py --db ../highball-db
 - `catalog.py` and `scripts/sync-steam.py`: optional Steam store enrichment and cached refresh.
 - `.cache/steam.json`: local cached store metadata (ignored by Git).
 
-The cloned site's `content/` fragments are retained only as source/reference and a list of old URLs for redirects. The new site does not render their old markup or use `static/style.css`. The logo and favicon assets are reused from the original repository. The actual app screenshot is the reference for the AI-generated Mac device hero, used as a darkened full-width background behind the headline and buttons. The fantasy DLSS illustration is labelled Visual concept in every language; the sharpness slider is illustrative, not measured DLSS output. Generation prompts and provenance are recorded in `IMAGE-PROMPTS.md`. Publisher blocks such as World of Warships are labelled separately from kernel anti-cheat blocks. The database treats both as compatibility blockers but records different reasons. Game cards automatically use Steam artwork when an app ID is available, with abstract placeholders as a fallback.
+The maintainer-authored `content/first-game.html` and `content/troubleshooting.html` guides are published as English-only pages and linked from the footer. Other cloned-site `content/` fragments remain source/reference and redirect to relevant redesigned sections; the new site does not use the old `static/style.css`. The logo and favicon assets are reused from the original repository. The actual app screenshot is the reference for the AI-generated Mac device hero, used as a darkened full-width background behind the headline and buttons. The fantasy DLSS illustration is labelled Visual concept in every language; the sharpness slider is illustrative, not measured DLSS output. Generation prompts and provenance are recorded in `IMAGE-PROMPTS.md`. Publisher blocks such as World of Warships are labelled separately from kernel anti-cheat blocks. The database treats both as compatibility blockers but records different reasons. Game cards automatically use Steam artwork when an app ID is available, with abstract placeholders as a fallback.
 
 ## Add real images
 
@@ -94,7 +94,7 @@ python3 build.py
 
 ## Languages and SEO
 
-English is the default static root (`/`). Other languages use `/es/`, `/ru/`, `/zh/`, `/ja/`, `/ko/`, `/pt/`; the database and curated game routes exist under each locale. Every indexed page has a canonical, hreflang alternatives, an x-default link, translated metadata, HTML language, and sitemap entry. Marketing copy exists in the HTML, not only in JavaScript.
+English is the default static root (`/`). Other languages use `/es/`, `/ru/`, `/zh/`, `/ja/`, `/ko/`, `/pt/`; the database and curated game routes exist under each locale. Every localized indexed page has a canonical, hreflang alternatives, an x-default link, translated metadata, HTML language, and sitemap entry. The English-only first-game and troubleshooting guides have English canonicals and stay outside the localized sitemap alternates. Marketing copy exists in the HTML, not only in JavaScript.
 
 Only a visit to the English home can automatically redirect. The detector checks the saved manual preference, then the browser's language list. An explicit localized URL is respected. Unsupported languages stay English; recognised crawlers receive English. Manual preferences survive visits, and language switching preserves the page, search and hash. The English root remains fully usable with JavaScript or storage disabled.
 
@@ -107,7 +107,7 @@ node scripts/check-language.mjs
 node --check static/site.js
 ```
 
-The static check validates localized pages, source-data counts, deduplication, internal links/assets, translation markers, canonicals, hreflang and exclusion of predictions from the sitemap. The small Node check verifies language detection, saved preferences, crawler handling, explicit language routes and repository subpaths. Node is only needed for this check, not building or hosting the website.
+The static check validates localized and English-only guide pages, source-data counts, deduplication, internal links/assets, translation markers, canonicals, hreflang and exclusion of predictions from the sitemap. The small Node check verifies language detection, saved preferences, crawler handling, explicit language routes and repository subpaths. Node is only needed for this check, not building or hosting the website.
 
 ## GitHub Pages
 

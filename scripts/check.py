@@ -78,17 +78,39 @@ if __name__=='__main__':
                 if target.endswith('/'):file=file/'index.html'
                 assert file.exists(),(path,'broken internal link',link)
                 if parsed.fragment and file.suffix=='.html':assert parsed.fragment in Page(file.read_text()).ids,(path,'missing anchor',link)
+    for route in ['docs/first-game/','docs/troubleshooting/']:
+        path=route+'index.html';text=(out/path).read_text();page=Page(text);pages[path]=page
+        assert page.lang=='en' and page.h1==1,(path,'English-only guide structure')
+        assert page.canonical==a.base.rstrip('/')+'/'+route,(path,'guide canonical')
+        assert not page.alternates,(path,'English-only guide must not advertise untranslated alternates')
+        assert not page.noindex,(path,'guide unexpectedly noindex')
+        assert not re.search(r'\{\{?[a-zA-Z_-]+\}?\}', ''.join(page.visible)),(path,'unresolved guide template marker')
+        for link in page.links:
+            parsed=urlsplit(link)
+            if parsed.scheme or parsed.netloc:continue
+            target=unquote(parsed.path)
+            if not target:continue
+            assert target.startswith(prefix+'/'),(path,'incorrect project base',link)
+            target=target[len(prefix)+1:]
+            key=(target,parsed.fragment)
+            if key in checked_links:continue
+            checked_links.add(key)
+            file=out/target
+            if target.endswith('/'):file=file/'index.html'
+            assert file.exists(),(path,'broken internal link',link)
+            if parsed.fragment and file.suffix=='.html':assert parsed.fragment in Page(file.read_text()).ids,(path,'missing anchor',link)
     tree=ET.parse(out/'sitemap.xml');urls=tree.findall('{http://www.sitemaps.org/schemas/sitemap/0.9}url')
     for entry in urls:
         url=entry.find('{http://www.sitemaps.org/schemas/sitemap/0.9}loc').text
         path=urlsplit(url).path[len(prefix)+1:]+'index.html'
         text=(out/path).read_text();assert not Page(text).noindex,('noindex in sitemap',path)
-    assert len(urls)==len(langs)*(len(games)+6),('sitemap count',len(urls))
+    assert len(urls)==len(langs)*(len(games)+6)+2,('sitemap count',len(urls))
     for game in prediction_items:
         text=(out/f'games/{game["id"]}/index.html').read_text()
         assert '<meta name="robots" content="noindex,follow">' in text,('prediction indexed',game['id'])
         assert prefix+'/database/predictions/?' in text,('legacy prediction destination',game['id'])
     assert (out/'.nojekyll').exists()
+    assert '/docs/first-game/' in (out/'llms.txt').read_text()
     for lang in langs:
         data=json.loads((out/f'data/catalog/{lang}.json').read_text())
         assert data['source']=='Steam store' and 'not part of the CC0' in data['rights']

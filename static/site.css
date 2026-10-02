@@ -66,3 +66,5 @@
 .compatibility-game:hover .compatibility-game-arrow{color:var(--orange)}
 @media(max-width:900px){.compatibility-panel{gap:28px;padding:28px}.compatibility-copy h2{font-size:30px}}
 @media(max-width:600px){.compatibility-panel{grid-template-columns:1fr;padding:28px 24px;gap:26px}.compatibility-copy h2{font-size:30px}.compatibility-copy>p{font-size:13px}.compatibility-copy>small{font-size:11px}.compatibility-game{padding:18px 40px 18px 18px}.compatibility-game-name{font-size:22px}.compatibility-game-arrow{right:18px;top:18px}}
+
+.english-doc .language-switch{display:none}

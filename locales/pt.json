@@ -161,5 +161,7 @@
   "compatibilityCaveat": "A compatibilidade e o desempenho variam conforme o jogo e o Mac. Confira os relatos mais recentes antes de baixar.",
   "blockedGamesLink": "Todos os {count} jogos bloqueados por anti-cheat",
   "blocked-publisher": "Bloqueado pela publicadora",
-  "publisherBlockNote": "A publicadora bloqueou a versão de Windows no macOS. Trocar o mecanismo gráfico não remove essa restrição."
+  "publisherBlockNote": "A publicadora bloqueou a versão de Windows no macOS. Trocar o mecanismo gráfico não remove essa restrição.",
+  "firstGameLabel": "Guia do primeiro jogo",
+  "troubleshootingLabel": "Solução de problemas"
 }

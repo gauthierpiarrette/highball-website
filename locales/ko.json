@@ -161,5 +161,7 @@
   "compatibilityCaveat": "호환성과 성능은 게임과 Mac에 따라 달라집니다. 다운로드하기 전에 최신 보고를 확인하세요.",
   "blockedGamesLink": "안티치트로 차단된 게임 {count}개 모두 보기",
   "blocked-publisher": "퍼블리셔 차단",
-  "publisherBlockNote": "퍼블리셔가 Windows 버전의 macOS 실행을 막았습니다. 그래픽 엔진을 바꿔도 이 제한은 풀리지 않습니다."
+  "publisherBlockNote": "퍼블리셔가 Windows 버전의 macOS 실행을 막았습니다. 그래픽 엔진을 바꿔도 이 제한은 풀리지 않습니다.",
+  "firstGameLabel": "첫 게임 가이드",
+  "troubleshootingLabel": "문제 해결"
 }

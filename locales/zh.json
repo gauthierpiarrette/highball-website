@@ -161,5 +161,7 @@
   "compatibilityCaveat": "兼容性和性能因游戏和 Mac 而异。下载前请查看最新报告。",
   "blockedGamesLink": "全部 {count} 款被反作弊阻止的游戏",
   "blocked-publisher": "发行商阻止",
-  "publisherBlockNote": "发行商已阻止 Windows 版本在 macOS 上运行。更换图形引擎也无法解除此限制。"
+  "publisherBlockNote": "发行商已阻止 Windows 版本在 macOS 上运行。更换图形引擎也无法解除此限制。",
+  "firstGameLabel": "新手游戏指南",
+  "troubleshootingLabel": "故障排除"
 }

@@ -161,5 +161,7 @@
   "compatibilityCaveat": "Compatibility and performance vary by game and Mac. Check the latest reports before you download.",
   "blockedGamesLink": "All {count} games blocked by anti-cheat",
   "blocked-publisher": "Blocked by publisher",
-  "publisherBlockNote": "The publisher has blocked the Windows version from running on macOS. Changing the graphics engine does not remove that restriction."
+  "publisherBlockNote": "The publisher has blocked the Windows version from running on macOS. Changing the graphics engine does not remove that restriction.",
+  "firstGameLabel": "First game guide",
+  "troubleshootingLabel": "Troubleshooting"
 }
