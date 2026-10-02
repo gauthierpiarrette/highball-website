@@ -1,0 +1,34 @@
+<section class="hero hero-background">
+ <div class="hero-backdrop" aria-hidden="true"><img src="$root/static/$heroAsset" width="1672" height="940" alt="" fetchpriority="high"></div>
+ <div class="hero-content section-shell">
+ <div class="hero-brand hero-enter"><img src="$root/static/logo-128.png" alt="" width="64" height="64"><span>Highball<span class="brand-dot">.</span></span></div>
+ <h1 class="hero-enter"><span>{{hero1}}</span><br>{{hero2}} <em>{{hero3}}</em></h1>
+ <p class="hero-copy hero-enter">{{heroText}}</p>
+ <div class="hero-actions hero-enter"><a class="button" href="$download">$apple {{download}}</a><a class="button button-outline" href="$repo">$github {{github}} <span aria-hidden="true">↗</span></a></div>
+ <p class="hero-requirements hero-enter">{{requirements}}</p>
+ <div class="trust-strip"><span><b>✓</b> {{noSubscription}}</span><a href="$repo"><b>↗</b> {{openCode}}</a></div>
+ </div>
+</section>
+<section class="games-section" id="games">
+ <div class="section-shell"><div class="section-heading reveal"><div><p class="eyebrow">{{gamesTag}}</p><h2>$gamesHeadline</h2></div><div class="heading-side"><p>{{gamesText}}</p><a class="text-link" href="$database">{{allGames}} <span>↗</span></a></div></div></div>
+ <div class="section-shell"><form class="quick-search reveal" action="$database" method="get"><span aria-hidden="true">$searchIcon</span><input name="q" type="search" placeholder="{{search}}" aria-label="{{searchLabel}}" autocomplete="off"><button class="search-submit" aria-label="{{check}}">↗</button></form></div>
+ <div class="game-wall reveal" aria-hidden="true">$gameWall</div>
+</section>
+<section class="compatibility-section section-shell" id="compatibility" aria-labelledby="compatibility-title">
+ <div class="compatibility-panel reveal">
+  <div class="compatibility-copy"><h2 id="compatibility-title">{{compatibilityTitle}}</h2><p>{{compatibilityText}}</p><small>{{compatibilityCaveat}}</small><a class="text-link" href="$database?filter=blocked-anticheat">$blockedGamesLabel <span aria-hidden="true">↗</span></a></div>
+  <div class="compatibility-examples">$blockedGameExamples</div>
+ </div>
+</section>
+<section class="features-section section-shell" id="features">
+ <div class="center-heading reveal"><p class="eyebrow">{{featuresTag}}</p><h2>{{featuresTitle}}</h2><p>{{featuresText}}</p></div>
+ <div class="feature-grid">
+  <article class="feature-card stores-card reveal"><div class="store-orbit" aria-hidden="true"><div class="orbit-ring"></div><div class="store-tile steam">STEAM<span>●─●</span></div><div class="store-tile epic">EPIC<br><small>GAMES</small></div><div class="orbit-center"><img src="$root/static/logo-128.png" alt="" width="64" height="64"></div><span class="orbit-star">✦</span></div><div class="feature-copy"><span class="eyebrow">01 / Steam + Epic</span><h3>{{storesTitle}}</h3><p>{{storesText}}</p><small>{{storesNote}}</small></div></article>
+  <article class="feature-card privacy-card reveal"><div class="privacy-art" aria-hidden="true"><span class="privacy-orbit"></span><span class="privacy-lock">$lock</span><span class="privacy-dot d1"></span><span class="privacy-dot d2"></span></div><div class="feature-copy"><span class="eyebrow">02 / Highball</span><h3>{{privacyTitle}}</h3><p>{{privacyText}}</p></div></article>
+ </div>
+ <article class="dlss-card reveal" id="dlss"><div class="dlss-copy"><h3>$dlssHeadline</h3><p>{{dlssText}}</p><small>{{dlssNote}}</small></div><div class="comparison-wrap"><div class="comparison $comparisonClass" style="--split:50%"><img src="$root/static/$dlssUpscaled" alt="$comparisonAlt" width="1672" height="940" loading="lazy"><div class="comparison-original"><img src="$root/static/$dlssOriginal" alt="" width="1400" height="740" loading="lazy"></div><span class="compare-label label-left">$comparisonLeft</span><span class="compare-label label-right">$comparisonRight</span><span class="compare-divider"><b>↔</b></span>$dlssPlaceholder<input type="range" min="5" max="95" value="50" aria-label="{{dlssControl}}" id="comparison-slider"></div><small class="demo-note">$comparisonNote</small></div></article>
+</section>
+<section class="steps-section section-shell" id="start"><div class="section-heading reveal"><div><p class="eyebrow">{{stepsTag}}</p><h2>{{stepsTitle}}</h2></div><a class="text-link" href="$download">$apple {{download}}</a></div><div class="steps-grid"><article class="step reveal"><span class="step-number">01</span><span class="step-icon">↓</span><h3>{{step1}}</h3><p>{{step1Text}}</p></article><article class="step reveal"><span class="step-number">02</span><span class="step-icon">＋</span><h3>{{step2}}</h3><p>{{step2Text}}</p></article><article class="step reveal"><span class="step-number">03</span><span class="step-icon">▷</span><h3>{{step3}}</h3><p>{{step3Text}}</p></article></div><p class="setup-note"><span>◷</span> {{setupNote}}</p></section>
+<section class="source-section section-shell" id="open-source"><div class="source-panel reveal"><div class="source-copy"><p class="eyebrow">{{sourceTag}}</p><h2>{{sourceTitle}}</h2><p>{{sourceText}}</p><a class="button button-cream" href="$repo">$github {{github}} ↗</a><small>{{sourceLicense}}</small></div><div class="source-art" aria-hidden="true"><div class="source-halo"></div><div class="code-symbol">&lt;<span>♥</span>/&gt;</div><div class="source-sticker sticker-one">{{together}} <span>✦</span></div><div class="source-sticker sticker-two">{{forever}} <span>↗</span></div></div><div class="source-bottom"><div><h3>{{contribute}}</h3><p>{{contributeText}}</p></div><a class="text-link" href="$report">{{report}} ↗</a></div></div><p class="source-thanks">{{sourceNote}} <a href="$credits">{{credits}} ↗</a></p></section>
+<section class="faq-section section-shell"><div class="faq-heading reveal"><p class="eyebrow">{{faqTag}}</p><h2>{{faqTitle}}</h2></div><div class="faq-list reveal">$faqs</div></section>
+<section class="final-cta section-shell reveal"><span class="cta-star" aria-hidden="true">✦</span><h2>{{ctaTitle}}</h2><p>{{ctaText}}</p><a class="button" href="$download">$apple {{download}}</a><small>{{requirements}}</small></section>

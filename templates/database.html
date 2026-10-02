@@ -1,0 +1,14 @@
+<section class="database-section section-shell">
+ <p class="eyebrow">HIGHBALL / {{check}}</p><h1>$dbHeading</h1><p class="database-intro">$dbIntro</p>
+ <nav class="database-modes" aria-label="{{searchScope}}">$searchModes</nav>
+ $statsSummary
+ <form class="quick-search" id="database-search" role="search" action="$searchAction"><span aria-hidden="true">$searchIcon</span><input type="search" name="q" placeholder="{{search}}" aria-label="{{searchLabel}}" autocomplete="off"><button class="search-submit" aria-label="{{check}}">↗</button></form>
+ <div class="filter-bar" role="group" aria-label="{{check}}">$filters</div>
+ <div class="db-info"><p>$searchNote</p></div>
+ <div class="results-heading"><p id="result-count" role="status" aria-live="polite">$initialCount {{results}}</p><span class="database-label">HIGHBALL-DB ↗ <a href="$dbRepo">{{dataLink}}</a></span></div>
+ <div class="database-grid" id="game-results">$initialGames</div>
+ <div class="load-more"><button class="button button-outline" id="load-more" hidden>{{more}} ↓</button><button class="button button-outline" id="retry" hidden>{{retry}}</button></div>
+ <noscript>$noscriptContent</noscript>
+ <div class="data-attribution"><p>{{dataCredit}}</p><p>{{mediaCredit}}</p><p>{{dataDate}}: $predictionDate · <a href="$root/data/games.json">CC0 JSON ↗</a> · <a href="$root/data/predictions.json">ODbL JSON ↗</a> · <a href="$dbRepo">GitHub ↗</a></p></div>
+</section>
+<dialog class="prediction-dialog" id="prediction-dialog" aria-labelledby="prediction-title"><button class="dialog-close" aria-label="{{close}}">×</button><span class="status-pill prediction">◇ {{prediction}}</span><div id="prediction-artwork" class="game-art prediction-artwork" hidden></div><h2 id="prediction-title"></h2><p id="prediction-verdict"></p><p>{{predictionNote}}</p><p id="prediction-anticheat"></p><a id="prediction-source" class="text-link" href="https://www.protondb.com/">ProtonDB ↗</a><a id="prediction-store" class="text-link" href="https://store.steampowered.com/">{{viewSteam}} ↗</a><p class="media-credit">{{mediaCredit}}</p><p class="section-footnote">{{dataCredit}}</p></dialog>

@@ -2,3 +2,6 @@ dist/
 .highball-db/
 .DS_Store
 __pycache__/
+dist-pages/
+preview-artifacts/
+.cache/
