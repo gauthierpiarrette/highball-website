@@ -15,6 +15,24 @@ points to.</p>
 Finder's Archive Utility, and <code>ditto</code> all handle the zip correctly if you prefer it; <code>unzip</code>
 and several popular third-party unarchivers do not.</p>
 
+<h2>macOS says Highball "includes a component that will not open in macOS 28"</h2>
+<p>Highball itself is a native Apple Silicon app. The Wine engine that runs your Windows games is Intel code,
+and so are the games themselves, and macOS translates both with Rosetta. The notice is macOS talking about
+that engine.</p>
+<p>What Apple has said: macOS 27 keeps Rosetta in full. macOS 28, expected in the autumn of 2027, keeps it only
+for some older Mac games. Apple has not said how it decides which ones, and we do not assume Highball is among
+them.</p>
+<p>Nothing in Highball can turn the notice off. Apple offers no switch for it, and CodeWeavers says the same to
+its own customers.</p>
+<p><b>What this means for you:</b> on macOS 27 and earlier nothing changes, and Highball is fully supported
+there. We will test Highball on the first macOS 28 beta the day Apple publishes it and write down what we find
+here. If your Mac must stay on the newest macOS, wait for that note before you update to 28.</p>
+<p><b>What we are working on:</b> an engine that does not need Rosetta. Apple added the system pieces for it in
+macOS 26.5, CodeWeavers has shown one working in a CrossOver preview, and Highball's engines are built from
+CodeWeavers' published sources, so we will follow when those sources are released. Such an engine will need
+macOS 26.5 or newer, will not use Apple's D3DMetal at first, and we have no date for it. We will not promise one
+until it runs your games on our test Macs.</p>
+
 <h2>The engine download stalls or never finishes</h2>
 <p>Highball reports live progress while it downloads an engine. If the progress stops moving for a minute,
 the transfer has stalled rather than hung: cancel it and start again, and it will resume. Partially downloaded
