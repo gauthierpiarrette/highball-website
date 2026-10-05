@@ -1,71 +1,57 @@
 name: Build and deploy
-
 on:
   push:
     branches: [main]
-  # highball-db can trigger a content rebuild:
-  #   gh api repos/gauthierpiarrette/highball-website/dispatches -f event_type=db-updated
   repository_dispatch:
     types: [db-updated]
-  # Catch data changes even if nobody dispatches. Hourly, not daily: highball-db pushes a
-  # db-updated dispatch when its WEBSITE_DISPATCH_TOKEN secret is set, and this is the fallback
-  # for when it is not. A day of lag meant the database could be right while the page people
-  # read was wrong, which is the one thing this site cannot afford.
   schedule:
     - cron: "27 * * * *"
   workflow_dispatch:
-
 permissions:
   contents: read
   pages: write
   id-token: write
-
 concurrency:
   group: pages
   cancel-in-progress: true
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Check out site
         uses: actions/checkout@v4
-
-      - name: Check out highball-db
+      - name: Check out compatibility data
         uses: actions/checkout@v4
         with:
           repository: gauthierpiarrette/highball-db
           path: .highball-db
-
-      - name: Build
-        run: python3 build.py --db .highball-db --out dist
-
-      - name: Sanity check the output
+      - name: Restore Steam catalog cache
+        uses: actions/cache@v4
+        with:
+          path: .cache/steam.json
+          key: steam-catalog-v1-${{ github.run_id }}
+          restore-keys: |
+            steam-catalog-v1-
+      - name: Refresh game artwork and store metadata
+        run: python3 scripts/sync-steam.py --db .highball-db
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
+      - name: Build static website
+        env:
+          BASE_URL: ${{ steps.pages.outputs.base_url }}
+        run: python3 build.py --db .highball-db --out dist --base "$BASE_URL"
+      - name: Check generated website
+        env:
+          BASE_URL: ${{ steps.pages.outputs.base_url }}
         run: |
-          set -e
-          test -s dist/index.html
-          test -s dist/database/index.html
-          test -s dist/sitemap.xml
-          test -s dist/CNAME
-          test -s dist/data/predictions.json
-          # every curated game in the db must have produced a page
-          expected=$(ls .highball-db/db/games/*.json | wc -l | tr -d ' ')
-          # count game dirs that are NOT noindex (curated pages only)
-          actual=$(grep -L 'name="robots" content="noindex' dist/games/*/index.html | wc -l | tr -d ' ')
-          echo "curated pages: $actual (db entries: $expected)"
-          test "$actual" -eq "$expected"
-          # the sitemap must never contain a noindex page
-          ! grep -qE '<loc>[^<]*/games/' dist/sitemap.xml || \
-            for u in $(grep -oE '/games/[^<]*' dist/sitemap.xml); do
-              grep -q 'noindex' "dist${u}index.html" && { echo "noindex page in sitemap: $u"; exit 1; } || true
-            done
-          echo "OK"
-
-      - name: Upload artifact
+          python3 scripts/check.py --db .highball-db --out dist --base "$BASE_URL"
+          node scripts/check-language.mjs
+          python3 -m unittest discover -s tests
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
-
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -73,5 +59,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - id: deployment
+      - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4

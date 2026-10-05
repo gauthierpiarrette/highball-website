@@ -1,0 +1,20 @@
+{
+  "hero": {
+    "file": "media/mac-devices-concept.jpg",
+    "placeholder": false,
+    "concept": true
+  },
+  "app": "app.jpg",
+  "dlss": {
+    "original": "media/fantasy-concept.jpg",
+    "upscaled": "media/fantasy-concept.jpg",
+    "placeholder": false,
+    "concept": true
+  },
+  "covers": {
+    "red-dead-redemption-2": null,
+    "cyberpunk-2077": null,
+    "portal-2": null,
+    "elden-ring": null
+  }
+}
