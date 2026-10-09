@@ -1,0 +1,64 @@
+<!-- Help get Forza Horizon 6's stutter fixed | Forza Horizon 6 hitches about once a second on every Mac because Rosetta handles one kind of CPU exception slowly. Only Apple can change that. Here is how to tell Apple in five minutes. -->
+<h1>Help get Forza Horizon 6's stutter fixed</h1>
+<p>Forza Horizon 6 freezes for about a tenth of a second roughly once a second, whatever the settings, on
+every Mac we have heard from. In Apple's Metal HUD it shows as tall spikes in the frame time graph. The cause
+is in Rosetta, the part of macOS that runs Intel code on Apple silicon, so neither Highball nor Wine can fix
+it. Apple can, and every report that points at the same problem makes it more likely they will.</p>
+<p class="note">Five minutes, nothing to install, no Terminal. Open Feedback Assistant, paste the two texts
+below, and press Submit.</p>
+
+<h2>What is going on</h2>
+<p>About once a second the game's copy protection runs a check while the game waits for it. The check
+triggers about 2,000 CPU exceptions on purpose and handles each one itself. On a PC an exception takes one or
+two microseconds, so the whole check is over in a few milliseconds. Under Rosetta each one takes 15 to 60
+microseconds, so the check takes about a tenth of a second, and that is the hitch you see.</p>
+<p>We measured it on an M4 Mac mini with small test programs. The same exception costs about 1.5
+microseconds in native Apple silicon code, about 15 under Rosetta, and about 32 under Rosetta when other
+threads are busy, as they always are in a game. Wine's own share is about 5%. We tried every setting we could
+find, real-time priority included, and the best of them shortens the hitch by about a fifth. Any game whose
+protection works this way is hit the same way. Forza Horizon 6 is the one we measured.</p>
+
+<h2>Why your report helps</h2>
+<p>We sent Apple a detailed report with the test programs and every measurement. Its number is
+<b>FB_NUMBER</b>. Apple weighs how many people a problem affects when it decides what to fix, and a report
+that names that number gets linked to it. You do not need to be a developer or run anything.</p>
+
+<h2>Send it</h2>
+<ol>
+  <li>Open <b>Feedback Assistant</b>. It is already on your Mac, so press ⌘ Space and type its name, or use
+    <a href="https://feedbackassistant.apple.com">feedbackassistant.apple.com</a>. Sign in with your Apple
+    Account.</li>
+  <li>Press <b>New Feedback</b> and choose <b>macOS</b>.</li>
+  <li>For the area, choose <b>AREA_NAME</b>. If it is not in the list, choose <b>Something else not on this
+    list</b>.</li>
+  <li>For the kind of problem, choose <b>TYPE_NAME</b>.</li>
+  <li>Copy the title and the description below into the form, and fill in your Mac and macOS version.</li>
+  <li>If it offers to collect diagnostics, let it, ideally while Forza is running and stuttering. They go
+    to Apple only. A short screen recording of the hitch with the Metal HUD on helps too.</li>
+  <li>Press <b>Submit</b>. If you like, post your FB number in <a href="TRACKER_URL">this thread</a>, so we
+    can show Apple how many players it affects.</li>
+</ol>
+
+<h3>Title</h3>
+<pre class="copyable" style="white-space:pre-wrap"><code>Forza Horizon 6 stutters about once a second under Rosetta (same as FB_NUMBER)</code></pre>
+
+<h3>Description</h3>
+<pre class="copyable" style="white-space:pre-wrap"><code>Same issue as FB_NUMBER, please link this report to it.
+
+Forza Horizon 6 (Steam, running through Wine with Highball) freezes for about a tenth of a second roughly once a second on my Mac. The game's copy protection runs a check about every second that triggers around 2,000 CPU exceptions, and each one is about ten times slower under Rosetta than in native code. FB_NUMBER has test programs and measurements.
+
+My Mac: [model, chip and memory]
+macOS: [version]
+What I see: [for example, a hitch every second in menus and while driving]</code></pre>
+
+<h2>What to expect</h2>
+<p>Apple rarely answers reports like this one. If yours comes back marked as a duplicate, that is good news,
+it means it was linked to the main report. Nothing will change overnight and Apple promises nothing. It is
+still worth asking, because Rosetta is what runs every Windows game on a Mac today.</p>
+<p>Questions or numbers from your own Mac are welcome on our
+<a href="TRACKER_URL">GitHub</a>.</p>
+
+<script>
+document.querySelectorAll('pre.copyable').forEach(p => p.insertAdjacentHTML('beforebegin', '<button type="button" class="btn ghost copy-btn" style="font-size:.8rem;padding:.3rem .8rem;margin-bottom:.4rem">Copy</button>'));
+document.querySelectorAll('.copy-btn').forEach(b => b.addEventListener('click', () => navigator.clipboard.writeText(b.nextElementSibling.innerText).then(() => b.textContent = 'Copied')));
+</script>
