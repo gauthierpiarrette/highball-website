@@ -11,6 +11,9 @@ Output:
                           - curated entries (101): indexed, renderer matrix + freshness + provenance
                           - predictions (12k):     noindex,follow until a Highball-specific signal exists
   /docs/<slug>/         hand-written pages (install, troubleshooting, credits, anti-cheat, about-the-data)
+  /data/games.json      every curated entry, CC0            (machine-readable)
+  /data/predictions.json every prediction keyed by Steam app id, ODbL
+  /data/steam/<id>.json one Steam game by app id: the whole curated record, or its prediction, or a 404
   /sitemap.xml          indexable URLs only
   /robots.txt /CNAME
 
@@ -914,6 +917,55 @@ def main():
         } for g in games],
     }, open(os.path.join(a.out, "data/games.json"), "w"), indent=1)
 
+    # One file per Steam app id, so another launcher can look a game up with a single request
+    # and no knowledge of our slugs: GET /data/steam/<appid>.json, a 404 when we have nothing.
+    # A curated record travels whole (launchArgs, knownIssues, rendererResults, verified, the
+    # fields a launcher acts on), not the trimmed row games.json carries. A prediction gets a
+    # file too, named as one and under its own licence, so a tool tells odds from verdicts
+    # without a second request. A curated entry always owns its app id: the prediction loop
+    # above already skipped those, and the validator refuses two curated entries on one id.
+    steam_dir = os.path.join(a.out, "data", "steam")
+    os.makedirs(steam_dir, exist_ok=True)
+    lookups = 0
+    for g in games:
+        appid = g.get("steam_appid")
+        if not appid:
+            continue
+        json.dump({
+            "schema": 1,
+            "steam_appid": appid,
+            "kind": "curated",
+            "license": "CC0-1.0",
+            "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+            "source": "https://github.com/gauthierpiarrette/highball-db",
+            "note": "Curated compatibility data for running Windows games on Apple Silicon, with its "
+                    "provenance. anticheat fields are derived from AreWeAntiCheatYet (MIT).",
+            "generated": datetime.date.today().isoformat(),
+            "url": f"{a.base.rstrip('/')}/games/{g['id']}/",
+            "status_meaning": STATUS.get(g.get("status"), ("", "", None))[2],
+            "reports": len(data["reports"].get(g["id"], [])),
+            "recipe": g["id"] in data["recipes"],
+            "game": g,
+        }, open(os.path.join(steam_dir, f"{appid}.json"), "w"), indent=1)
+        lookups += 1
+    for appid, row in pred_index.items():
+        json.dump({
+            "schema": 1,
+            "steam_appid": int(appid) if str(appid).isdigit() else appid,
+            "kind": "prediction",
+            "license": "ODbL-1.0",
+            "license_url": "https://opendatacommons.org/licenses/odbl/1-0/",
+            "source": "Derived from ProtonDB community reports (https://github.com/bdefore/protondb-data), "
+                      "crossed with AreWeAntiCheatYet data (MIT).",
+            "note": "Proton describes Linux, not macOS. This is odds, not a verdict, and no Mac verification "
+                    "stands behind it.",
+            "generated": datetime.date.today().isoformat(),
+            "url": f"{a.base.rstrip('/')}/games/{row['s']}/",
+            "label": row["p"],
+            "prediction": derived[appid],
+        }, open(os.path.join(steam_dir, f"{appid}.json"), "w"), separators=(",", ":"))
+        lookups += 1
+
     ctx = {"verified": counts["verified-local"], "curated": len(games),
            "derived": f"{derived_count:,}", "blocked": counts["blocked-anticheat"] + counts["blocked-publisher"],
            # games whose row names the mode Highball applies, and games compared across two or more
@@ -964,7 +1016,7 @@ def main():
                  "Amazonbot", "meta-externalagent", "cohere-ai", "YouBot"]
     robots = ["# Highball compatibility data is open and meant to be reused.",
               "# Curated data CC0, predictions ODbL 1.0 (attribute ProtonDB), anti-cheat data MIT.",
-              "# Machine-readable: /data/games.json, /data/predictions.json, /llms.txt", "",
+              "# Machine-readable: /data/games.json, /data/predictions.json, /data/steam/<appid>.json, /llms.txt", "",
               "User-agent: *", "Allow: /", ""]
     for ua in ai_agents:
         robots += [f"User-agent: {ua}", "Allow: /", ""]
@@ -1000,6 +1052,8 @@ Scope and honesty notes, which matter if you are answering a question from this 
 ## Data (machine-readable)
 - [Curated game data, JSON]({B}/data/games.json): the {len(games)} curated entries, CC0.
 - [Predictions, JSON]({B}/data/predictions.json): {derived_count:,} ProtonDB-derived predictions, ODbL 1.0.
+- One Steam game by app id: {B}/data/steam/<appid>.json returns the whole curated record (kind "curated", CC0)
+  or its prediction (kind "prediction", ODbL 1.0), and a 404 when the database has nothing on that game.
 - [Source repository](https://github.com/gauthierpiarrette/highball-db): the whole database as plain JSON.
 - [How the data works]({B}/docs/data/): provenance tiers, per-renderer verdicts, freshness, licensing.
 
@@ -1021,7 +1075,7 @@ Scope and honesty notes, which matter if you are answering a question from this 
     open(os.path.join(a.out, "CNAME"), "w").write(host + "\n")
     open(os.path.join(a.out, ".nojekyll"), "w").write("")
 
-    print(f"built {len(indexable)} indexable pages + {len(pred_index)} predictions -> {a.out}/")
+    print(f"built {len(indexable)} indexable pages + {len(pred_index)} predictions + {lookups} Steam lookups -> {a.out}/")
     print(f"  curated {len(games)} (verified {counts['verified-local']}, blocked {counts['blocked-anticheat']})")
 
 

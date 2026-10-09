@@ -30,6 +30,7 @@ Drop `--no-predictions` for a full build. Flags: `--db`, `--out`, `--base`.
 | `/games/<slug>/` | one page per ProtonDB-derived prediction | **no** (`noindex,follow`, kept out of the sitemap) |
 | `/vs/<slug>/` | `content/vs/*.html` — comparisons | yes |
 | `/docs/<slug>/` | `content/*.html` — install, troubleshooting, anti-cheat, data, credits, referee pages | yes |
+| `/data/games.json`, `/data/predictions.json`, `/data/steam/<appid>.json` | machine-readable exports: every curated entry, every prediction, and one Steam game by app id (see `/docs/data/`) | — |
 | `/sitemap.xml`, `/robots.txt`, `/CNAME` | generated | — |
 
 Predictions are deliberately excluded from the index and the sitemap: they are derived from Linux data and

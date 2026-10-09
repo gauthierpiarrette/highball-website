@@ -59,6 +59,19 @@ jobs:
             for u in $(grep -oE '/games/[^<]*' dist/sitemap.xml); do
               grep -q 'noindex' "dist${u}index.html" && { echo "noindex page in sitemap: $u"; exit 1; } || true
             done
+          # every curated game with a Steam app id has a lookup file, and it parses as curated
+          python3 - <<'EOF'
+          import glob, json, os, sys
+          ids = [json.load(open(f)).get("steam_appid") for f in glob.glob(".highball-db/db/games/*.json")]
+          ids = [i for i in ids if i]
+          missing = [i for i in ids if not os.path.exists(f"dist/data/steam/{i}.json")]
+          if missing:
+              sys.exit(f"lookup files missing for {len(missing)} curated games, e.g. {missing[:5]}")
+          rec = json.load(open(f"dist/data/steam/{ids[0]}.json"))
+          if rec["kind"] != "curated" or rec["game"]["steam_appid"] != ids[0]:
+              sys.exit(f"lookup file for {ids[0]} is not the curated record: {rec}")
+          print(f"steam lookups: {len(glob.glob('dist/data/steam/*.json'))} ({len(ids)} curated)")
+          EOF
           echo "OK"
 
       - name: Upload artifact

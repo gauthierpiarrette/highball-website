@@ -39,6 +39,32 @@ because that is what its source requires, and the anti-cheat data keeps AreWeAnt
 split is deliberate: the parts we generate are as free as we can make them, and the parts we borrow keep their
 original terms.</p>
 
+<h2>Use the data in your own tool</h2>
+<p>Everything on this site is also published as plain JSON with open CORS, so a launcher, a wiki or a script can
+read it directly. Each file names its licence.</p>
+<div class="tablewrap">
+<table>
+<tr><th>URL</th><th>What it holds</th><th>Licence</th></tr>
+<tr><td><a href="/data/steam/1091500.json"><code>/data/steam/&lt;appid&gt;.json</code></a></td>
+    <td>One Steam game by app id. A curated entry comes back whole, every field its record has, from status and
+        renderer to launch arguments, known issues, per-renderer results and provenance, with <code>kind</code>
+        set to <code>curated</code>.
+        A game with only a prediction comes back with <code>kind</code> set to <code>prediction</code>.
+        A game the database knows nothing about is a 404.</td>
+    <td>CC0 for curated entries, ODbL 1.0 for predictions</td></tr>
+<tr><td><a href="/data/games.json"><code>/data/games.json</code></a></td>
+    <td>All {curated} curated entries in one file, one row per game, with its Steam app id and a link to its page.</td>
+    <td>CC0</td></tr>
+<tr><td><a href="/data/predictions.json"><code>/data/predictions.json</code></a></td>
+    <td>All {derived} predictions, keyed by Steam app id.</td>
+    <td>ODbL 1.0, attribute ProtonDB</td></tr>
+</table>
+</div>
+<p>The files are rebuilt on every database change and cached for ten minutes. The fields of a curated entry are
+the ones in <code>db/games/</code> of the source repository, described in its README. The <code>schema</code>
+number in a lookup file only changes if a field is renamed or removed. If you build on this and something is
+missing, <a href="https://github.com/gauthierpiarrette/highball-db/issues">say so</a>.</p>
+
 <h2>Contributing</h2>
 <p>A report takes a minute and is the only way the empty rows get filled.
 <a href="https://github.com/gauthierpiarrette/highball-db/issues/new?template=report.yml">Send one here</a> —
