@@ -125,3 +125,8 @@ td.t a { text-decoration:none }
                 font-size:.9rem; justify-content:flex-start }
   .gamehead .art { width:100%; max-width:340px }
 }
+
+.issues { list-style:none; padding:0; margin:0; display:grid; gap:.75rem }
+.issues .note p { margin:.25rem 0 }
+.issue-symptom { font-weight:600 }
+.issue-label { font-weight:600; margin-right:.35rem }

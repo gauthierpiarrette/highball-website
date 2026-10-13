@@ -457,6 +457,23 @@ def game_page(game, data, base):
     if game.get("notes"):
         body.append("<h2>Notes</h2><p>" + html.escape(game["notes"]).replace("\n", "</p><p>") + "</p>")
 
+    # Known issues carry most of the database's workarounds (GTA V's sign-in clock error, the
+    # GPU skinning fix for Yandere Simulator), and until 2026-10-13 they only reached other
+    # launchers through /data/steam/<appid>.json, never this page.
+    issues = [k for k in (game.get("knownIssues") or []) if isinstance(k, dict) and k.get("symptom")]
+    if issues:
+        items = []
+        for k in issues:
+            rows = [f'<p class="issue-symptom">{html.escape(k["symptom"])}</p>']
+            if k.get("fix"):
+                rows.append(f'<p><span class="issue-label">What helps</span> {html.escape(k["fix"])}</p>')
+            if k.get("cause"):
+                rows.append(f'<p class="sub"><span class="issue-label">Why</span> {html.escape(k["cause"])}</p>')
+            if k.get("fixedIn"):
+                rows.append(f'<p class="sub"><span class="issue-label">Fixed in</span> {html.escape(str(k["fixedIn"]))}</p>')
+            items.append('<li class="note">' + "".join(rows) + "</li>")
+        body.append('<h2>Known issues</h2><ul class="issues">' + "".join(items) + "</ul>")
+
     if recipe:
         body.append(f"""<h2>One-click setup</h2>
         <p>Highball ships a recipe for {html.escape(title)}: open the game in your Library and apply it.
