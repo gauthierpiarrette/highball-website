@@ -43,7 +43,7 @@ def is_blocked(status):
     """Every kind of block: the game cannot run on a Mac, so no renderer advice and no download."""
     return (status or "").startswith("blocked-")
 RENDERERS = ["dxvk", "dxmt", "d3dmetal"]
-RENDERER_LABEL = {"dxvk": "DXVK", "dxmt": "DXMT", "d3dmetal": "D3DMetal", "wined3d": "wined3d"}
+RENDERER_LABEL = {"dxvk": "DXVK", "dxmt": "DXMT", "d3dmetal": "D3DMetal", "wined3d": "wined3d", "vkd3d": "vkd3d-proton"}
 PRED_LABEL = {"likely": ("Likely playable", "good"), "maybe": ("Maybe", "warn"),
               "unlikely": ("Unlikely", "bad"), "blocked": ("Blocked", "bad")}
 
@@ -190,6 +190,7 @@ RENDERER_GLOSS = {
     "dxvk": "Direct3D 9-11 over Vulkan",
     "dxmt": "Direct3D 11 over Metal",
     "d3dmetal": "Apple's Game Porting Toolkit",
+    "vkd3d": "Direct3D 12 over Vulkan",
 }
 
 
@@ -207,7 +208,10 @@ def renderer_matrix(game, reports):
             seen.setdefault(rr, []).append(r)
     known = {k.lower(): v for k, v in (game.get("rendererResults") or {}).items()}
     rows = []
-    for r in RENDERERS:
+    # A renderer outside the usual three gets its row when the record names it: vkd3d-proton is how Microsoft Flight
+    # Simulator 2024 runs (the native arm64 engine), and its page listed only the three that fail (2026-10-19).
+    extra = [x for x in dict.fromkeys([rec, *known]) if x and x not in RENDERERS and x in RENDERER_GLOSS]
+    for r in RENDERERS + extra:
         label = f'{RENDERER_LABEL[r]}<span class="prov">{RENDERER_GLOSS[r]}</span>'
         if r in known and r != rec:
             k = known[r]
@@ -307,7 +311,9 @@ def faq_entries(title, game, blocked, label, stamp, has_recipe):
         if rec:
             r = RENDERER_LABEL.get(rec, rec)
             out.append(qa(f"Which renderer should I use for {title}?",
-                          f"{r}. Highball can translate Direct3D through DXVK, DXMT or Apple's D3DMetal, and the "
+                          f"{r}. Highball can translate Direct3D through "
+                          + ("DXVK, DXMT, Apple's D3DMetal or vkd3d-proton" if rec == "vkd3d" else "DXVK, DXMT or Apple's D3DMetal")
+                          + ", and the "
                           f"right choice varies by game. The database records {r} for {title}"
                           + (f", and applying the {title} recipe sets it for you." if has_recipe
                              else ". Highball uses it automatically when the game has a row; to set it by hand, open Settings, then Environments.")))
@@ -333,6 +339,13 @@ def game_page(game, data, base):
     # freshness stamp — the field competitors don't publish per renderer/engine
     engine = next((r.get("engine") for r in reversed(reports) if r.get("engine")), None)
     macos = next((r.get("macos") for r in reversed(reports) if r.get("macos")), None)
+    # Highball's own run, when it is the newest evidence: a community report older than it must not stamp the page
+    # with its engine (Microsoft Flight Simulator 2024 showed August's failed report on the old engine next to the
+    # October verification, 2026-10-19).
+    ran = game.get("verified") or {}
+    newest_report = max((str(r.get("date") or "")[:10] for r in reports), default="")
+    if ran.get("engine") and str(last or "") >= newest_report:
+        engine, macos = ran["engine"], ran.get("macos") or macos
     if publisher_block:
         stamp = (f"tested {last}, stopped by the publisher" if last else "the publisher's choice, not a test result")
     elif blocked:
@@ -435,7 +448,8 @@ def game_page(game, data, base):
         every time.</p>""")
     else:
         body.append("<h2>Which renderer to use</h2>")
-        body.append("<p>Highball can run each game through three different Direct3D translation layers. "
+        layers = "four" if (game.get("renderer") or "").lower() == "vkd3d" or "vkd3d" in {k.lower() for k in (game.get("rendererResults") or {})} else "three"
+        body.append(f"<p>Highball can run each game through {layers} different Direct3D translation layers. "
                     "This is what the database knows for this title — empty rows are open questions, "
                     "not failures.</p>")
         body.append(renderer_matrix(game, reports))
@@ -460,7 +474,9 @@ def game_page(game, data, base):
     # Known issues carry most of the database's workarounds (GTA V's sign-in clock error, the
     # GPU skinning fix for Yandere Simulator), and until 2026-10-13 they only reached other
     # launchers through /data/steam/<appid>.json, never this page.
-    issues = [k for k in (game.get("knownIssues") or []) if isinstance(k, dict) and k.get("symptom")]
+    # A game whose known issues live in its recipe (Microsoft Flight Simulator 2024's) shows those.
+    issues = [k for k in (game.get("knownIssues") or (recipe or {}).get("knownIssues") or [])
+              if isinstance(k, dict) and k.get("symptom")]
     if issues:
         items = []
         for k in issues:
